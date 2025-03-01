@@ -16,6 +16,6 @@ import NavBar from './components/NavBar.vue'
 <style scoped>
 .body-container {
   margin-top: 20px;
-  background-color: antiquewhite;
+  background-color: white;
 }
 </style>

@@ -1,5 +1,4 @@
 <script setup lang="ts">
-// when navbar-burger is clicked, toggle the navbar-menu
 const toggleNavBar = () => {
   const burger = document.querySelector('.navbar-burger')
   const menu = document.querySelector('.navbar-menu')
@@ -21,7 +20,7 @@ const toggleNavBar = () => {
         class="navbar-burger"
         aria-label="menu"
         aria-expanded="false"
-        data-target="myNavBar"
+        data-target="navbar-items"
         @click="toggleNavBar"
       >
         <span aria-hidden="true"></span>
@@ -31,11 +30,11 @@ const toggleNavBar = () => {
       </a>
     </div>
 
-    <div id="myNavBar" class="navbar-menu">
+    <div id="navbar-items" class="navbar-menu">
       <div class="navbar-start">
         <RouterLink to="/" class="navbar-item">Home</RouterLink>
 
-        <RouterLink to="/about" class="navbar-item">About</RouterLink>
+        <RouterLink to="/my-activity" class="navbar-item">My Activity</RouterLink>
       </div>
 
       <div class="navbar-end"></div>
