@@ -1,4 +1,5 @@
 <script setup lang="ts">
+defineEmits(['toggleNavBar'])
 const toggleNavBar = () => {
   const burger = document.querySelector('.navbar-burger')
   const menu = document.querySelector('.navbar-menu')
@@ -13,7 +14,7 @@ const toggleNavBar = () => {
 </script>
 
 <template>
-  <nav class="navbar is-success" role="navigation" aria-label="main navigation">
+  <nav class="navbar" role="navigation" aria-label="main navigation">
     <div class="navbar-brand">
       <a
         role="button"
@@ -42,4 +43,15 @@ const toggleNavBar = () => {
   </nav>
 </template>
 
-<style scoped></style>
+<style scoped>
+.navbar {
+  background-color: rgb(85, 255, 119);
+}
+.navbar-item {
+  color: black;
+}
+
+.navbar-item:hover {
+  background-color: rgba(255, 255, 255, 0.5);
+}
+</style>
