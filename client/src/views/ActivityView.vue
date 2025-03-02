@@ -36,10 +36,12 @@ const posts = ref([
 <template>
   <main>
     <section class="ActivityView body-container">
-      <h1 class="title is-1">My Activity Log</h1>
-      <subtitle>
-        <button class="button is-primary">Add Workout</button>
-      </subtitle>
+      <div class="container block">
+        <h1 class="title is-1">My Activity Log</h1>
+        <subtitle>
+          <button class="button is-primary">Add Workout</button>
+        </subtitle>
+      </div>
 
       <div class="ActivityEntries container">
         <ActivityEntry

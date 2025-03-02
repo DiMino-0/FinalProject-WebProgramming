@@ -1,57 +1,59 @@
 <script setup lang="ts">
-defineEmits(['toggleNavBar'])
-const toggleNavBar = () => {
-  const burger = document.querySelector('.navbar-burger')
-  const menu = document.querySelector('.navbar-menu')
+import { ref } from 'vue'
 
-  if (burger && menu) {
-    burger.addEventListener('click', () => {
-      burger.classList.toggle('is-active')
-      menu.classList.toggle('is-active')
-    })
-  }
-}
+const showBurger = ref(false)
 </script>
 
 <template>
-  <nav class="navbar" role="navigation" aria-label="main navigation">
-    <div class="navbar-brand">
-      <a
-        role="button"
-        class="navbar-burger"
-        aria-label="menu"
-        aria-expanded="false"
-        data-target="navbar-items"
-        @click="toggleNavBar"
-      >
-        <span aria-hidden="true"></span>
-        <span aria-hidden="true"></span>
-        <span aria-hidden="true"></span>
-        <span aria-hidden="true"></span>
-      </a>
-    </div>
-
-    <div id="navbar-items" class="navbar-menu">
-      <div class="navbar-start">
-        <RouterLink to="/" class="navbar-item">Home</RouterLink>
-
-        <RouterLink to="/my-activity" class="navbar-item">My Activity</RouterLink>
+  <nav class="navbar is-success" role="navigation" aria-label="main navigation">
+    <div class="container">
+      <div class="navbar-brand">
+        <a
+          role="button"
+          class="navbar-burger"
+          aria-label="menu"
+          aria-expanded="false"
+          data-target="navbar-items"
+          v-bind:class="{ 'is-active': showBurger.valueOf() }"
+          @click="showBurger = !showBurger.valueOf()"
+        >
+          <span aria-hidden="true"></span>
+          <span aria-hidden="true"></span>
+          <span aria-hidden="true"></span>
+          <span aria-hidden="true"></span>
+        </a>
       </div>
 
-      <div class="navbar-end"></div>
+      <div
+        id="navbar-items"
+        class="navbar-menu"
+        v-bind:class="{ 'is-active': showBurger.valueOf() }"
+      >
+        <div class="navbar-start">
+          <RouterLink to="/" class="navbar-item">Home</RouterLink>
+
+          <RouterLink to="/my-activity" class="navbar-item">My Activity</RouterLink>
+
+          <RouterLink to="/friends-activity" class="navbar-item">Friends Activity</RouterLink>
+
+          <RouterLink to="/statistics" class="navbar-item">Statistics</RouterLink>
+
+          <RouterLink to="/search" class="navbar-item">Search</RouterLink>
+        </div>
+      </div>
+
+      <div class="navbar-end">
+        <div class="navbar-item">
+          <RouterLink to="/login" class="button is-primary">
+            <strong>Login</strong>
+          </RouterLink>
+        </div>
+        <div class="navbar-item">
+          <RouterLink to="/register" class="button is-light"> Register </RouterLink>
+        </div>
+      </div>
     </div>
   </nav>
 </template>
 
-<style scoped>
-.navbar {
-  background-color: rgb(85, 255, 119);
-}
-.navbar-item {
-  color: black;
-}
-
-.navbar-item:hover {
-  background-color: rgba(255, 255, 255, 0.5);
-}
-</style>
+<style scoped></style>

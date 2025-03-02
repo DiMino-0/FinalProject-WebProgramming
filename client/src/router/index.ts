@@ -15,7 +15,7 @@ const router = createRouter({
       component: () => import('@/views/ActivityView.vue'),
     },
     {
-      path: '/Friends-Activities',
+      path: '/friends-activities',
       name: 'friends',
       component: () => import('@/views/FriendsActivityView.vue'),
     },
@@ -28,6 +28,11 @@ const router = createRouter({
       path: '/people-search',
       name: 'search',
       component: () => import('@/views/PeopleSearchView.vue'),
+    },
+    {
+      path: '/admin-area',
+      name: 'admin',
+      component: () => import('@/views/AdminView.vue'),
     },
   ],
 })
