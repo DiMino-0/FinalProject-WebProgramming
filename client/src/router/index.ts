@@ -25,11 +25,6 @@ const router = createRouter({
       component: () => import('@/views/StatisticsView.vue'),
     },
     {
-      path: '/people-search',
-      name: 'search',
-      component: () => import('@/views/PeopleSearchView.vue'),
-    },
-    {
       path: '/admin-area',
       name: 'admin',
       component: () => import('@/views/AdminView.vue'),

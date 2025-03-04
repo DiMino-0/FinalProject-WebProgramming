@@ -15,7 +15,7 @@ const showBurger = ref(false)
           aria-expanded="false"
           data-target="navbar-items"
           v-bind:class="{ 'is-active': showBurger.valueOf() }"
-          @click="showBurger = !showBurger.valueOf()"
+          v-on:click="showBurger = !showBurger.valueOf()"
         >
           <span aria-hidden="true"></span>
           <span aria-hidden="true"></span>
