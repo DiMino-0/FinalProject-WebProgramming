@@ -15,7 +15,10 @@ import NavBar from './components/NavBar.vue'
 
 <style scoped>
 .body-container {
-  margin-top: 20px;
   background-color: white;
+  margin: 1rem;
+  padding: 1rem;
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(193, 19, 19, 1);
 }
 </style>
