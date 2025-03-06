@@ -9,7 +9,7 @@ const posts = ref([
     date: '2021-10-10',
     duration: '2 hours',
     location: 'Mount Everest',
-    picture: 'https://images.unsplash.com/photo-1612838320302-4b3b3b3b3b3b',
+    picture: '/bike.png',
     type: 'Hiking',
   },
   {
@@ -18,7 +18,7 @@ const posts = ref([
     date: '2021-10-11',
     duration: '1 hour',
     location: 'Pacific Ocean',
-    picture: 'https://images.unsplash.com/photo-1612838320302-4b3b3b3b3b3b',
+    picture: '/bike.png',
     type: 'Swimming',
   },
   {
@@ -27,7 +27,7 @@ const posts = ref([
     date: '2021-10-12',
     duration: '1 hour',
     location: 'Central Park',
-    picture: 'https://images.unsplash.com/photo-1612838320302-4b3b3b3b3b3b',
+    picture: '/bike.png',
     type: 'Running',
   },
 ])
