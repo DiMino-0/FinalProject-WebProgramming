@@ -21,6 +21,12 @@ const showRegisterPopUp = ref(false)
     <div class="modal-background" @click="showRegisterPopUp = !showRegisterPopUp"></div>
     <div class="modal-content">
       <div class="field">
+        <label class="label">Username</label>
+        <div class="control">
+          <input class="input" type="text" placeholder="First Name" />
+        </div>
+      </div>
+      <div class="field">
         <label class="label">Email</label>
         <div class="control">
           <input class="input" type="email" placeholder="Email" />
