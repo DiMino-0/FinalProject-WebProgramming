@@ -1,35 +1,12 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '../views/HomeView.vue'
-
+import { routes, handleHotUpdate } from 'vue-router/auto-routes'
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
-  routes: [
-    {
-      path: '/',
-      name: 'home',
-      component: HomeView,
-    },
-    {
-      path: '/my-activity',
-      name: 'activity',
-      component: () => import('@/views/ActivityView.vue'),
-    },
-    {
-      path: '/friends-activities',
-      name: 'friends',
-      component: () => import('@/views/FriendsActivityView.vue'),
-    },
-    {
-      path: '/statistics',
-      name: 'statistics',
-      component: () => import('@/views/StatisticsView.vue'),
-    },
-    {
-      path: '/admin',
-      name: 'admin',
-      component: () => import('@/views/AdminView.vue'),
-    },
-  ],
+  routes,
 })
+
+if (import.meta.hot) {
+  handleHotUpdate(router)
+}
 
 export default router
