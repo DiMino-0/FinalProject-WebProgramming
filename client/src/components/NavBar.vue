@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
+import LoginPopup from './LoginPopup.vue'
+import RegisterPopup from './RegisterPopup.vue'
 
 const showBurger = ref(false)
 </script>
@@ -14,8 +16,8 @@ const showBurger = ref(false)
           aria-label="menu"
           aria-expanded="false"
           data-target="navbar-items"
-          v-bind:class="{ 'is-active': showBurger.valueOf() }"
-          v-on:click="showBurger = !showBurger.valueOf()"
+          v-bind:class="{ 'is-active': showBurger }"
+          @click="showBurger = !showBurger"
         >
           <span aria-hidden="true"></span>
           <span aria-hidden="true"></span>
@@ -24,33 +26,23 @@ const showBurger = ref(false)
         </a>
       </div>
 
-      <div
-        id="navbar-items"
-        class="navbar-menu"
-        v-bind:class="{ 'is-active': showBurger.valueOf() }"
-      >
+      <div id="navbar-items" class="navbar-menu" v-bind:class="{ 'is-active': showBurger }">
         <div class="navbar-start">
           <RouterLink to="/" class="navbar-item">Home</RouterLink>
 
           <RouterLink to="/my-activity" class="navbar-item">My Activity</RouterLink>
 
-          <RouterLink to="/friends-activities" class="navbar-item">Friends Activity</RouterLink>
+          <RouterLink to="/friends-activity" class="navbar-item">Friends Activity</RouterLink>
 
           <RouterLink to="/statistics" class="navbar-item">Statistics</RouterLink>
 
-          <RouterLink to="/admin" class="navbar-item">Admin</RouterLink>
+          <RouterLink to="/search" class="navbar-item">Search</RouterLink>
         </div>
       </div>
 
       <div class="navbar-end">
-        <div class="navbar-item">
-          <RouterLink to="/login" class="button is-primary">
-            <strong>Login</strong>
-          </RouterLink>
-        </div>
-        <div class="navbar-item">
-          <RouterLink to="/register" class="button is-light"> Register </RouterLink>
-        </div>
+        <LoginPopup />
+        <RegisterPopup />
       </div>
     </div>
   </nav>
