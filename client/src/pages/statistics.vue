@@ -2,15 +2,15 @@
 
 <template>
   <main>
-    <section class="StatisticsView body-container">
+    <section class="statistics body-container">
       <div class="container has-text-black">
         <h1 class="title is-1 has-text-black">Statistics</h1>
-        <subtitle>
+        <h2 class="subtitle">
           <p>
             This is a simple activity tracker that allows you to log your workouts and see what your
             friends are up to.
           </p>
-        </subtitle>
+        </h2>
       </div>
     </section>
   </main>
