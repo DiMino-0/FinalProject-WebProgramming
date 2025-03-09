@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { getCurrentUser } from '@/models/User'
+import { refGetCurrentUser } from '@/models/User'
 
-const userRole = getCurrentUser().value?.role
+const userRole = refGetCurrentUser().value?.role
 </script>
 
 <template>
   <main>
-    <div class="AdminPage body-container" v-if="userRole === 'admin'">
+    <div class="admin body-container" v-if="userRole === 'admin'">
       <h1 class="title is-1 has-text-black">
         Here you can manage users, if you have the correct role
       </h1>

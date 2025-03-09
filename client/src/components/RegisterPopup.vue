@@ -23,7 +23,7 @@ const showRegisterPopUp = ref(false)
       <div class="field">
         <label class="label">Username</label>
         <div class="control">
-          <input class="input" type="text" placeholder="First Name" />
+          <input class="input" type="text" placeholder="Username" />
         </div>
       </div>
       <div class="field">
