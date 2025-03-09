@@ -20,7 +20,15 @@ class UserManager {
       password: 'admin1234',
       role: 'admin',
     },
+    {
+      id: -2,
+      username: 'JohnUser',
+      email: 'johnuser@temporary.com',
+      password: 'user1234',
+      role: 'user',
+    },
   ])
+  static currentUser = ref<User | null>(getUserByID(-1))
 
   static generateID() {
     return this.userID++
@@ -29,6 +37,18 @@ class UserManager {
 
 export function refUsers() {
   return UserManager.listOfUsers
+}
+
+export function getUserByID(id: number): User | null {
+  return UserManager.listOfUsers.value.find((user) => user.id === id) || null
+}
+
+export function getCurrentUser() {
+  return UserManager.currentUser
+}
+
+export function setCurrentUser(user: User) {
+  UserManager.currentUser.value = user
 }
 
 export function addUser(username: string, email: string, password: string, role?: string) {
