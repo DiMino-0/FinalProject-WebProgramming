@@ -30,9 +30,9 @@ const showBurger = ref(false)
         <div class="navbar-start">
           <RouterLink to="/" class="navbar-item">Home</RouterLink>
 
-          <RouterLink to="/my-activity" class="navbar-item">My Activity</RouterLink>
+          <RouterLink to="/activity" class="navbar-item">My Activity</RouterLink>
 
-          <RouterLink to="/friends-activity" class="navbar-item">Friends Activity</RouterLink>
+          <RouterLink to="/friends" class="navbar-item">Friends Activity</RouterLink>
 
           <RouterLink to="/statistics" class="navbar-item">Statistics</RouterLink>
 
