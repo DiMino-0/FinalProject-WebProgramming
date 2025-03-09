@@ -12,23 +12,36 @@ class UserManager {
   static userID: number = 0
   static roles = ['admin', 'user']
   static defaultRole = 'user'
+  static listOfUsers = ref<User[]>([
+    {
+      id: -1,
+      username: 'JohnAdmin',
+      email: 'johnadmin@temporary.com',
+      password: 'admin1234',
+      role: 'admin',
+    },
+  ])
 
   static generateID() {
     return this.userID++
   }
 }
 
-const listOfUsers = ref<User[]>([])
-
 export function refUsers() {
-  return listOfUsers
+  return UserManager.listOfUsers
 }
 
 export function addUser(username: string, email: string, password: string, role?: string) {
   const id = UserManager.generateID()
-  listOfUsers.value.push({ id, username, email, password, role: role || UserManager.defaultRole })
+  UserManager.listOfUsers.value.push({
+    id,
+    username,
+    email,
+    password,
+    role: role || UserManager.defaultRole,
+  })
 }
 
 export function removeUser(id: number) {
-  listOfUsers.value = listOfUsers.value.filter((user) => user.id !== id)
+  UserManager.listOfUsers.value = UserManager.listOfUsers.value.filter((user) => user.id !== id)
 }
