@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted, computed, onUnmounted, watch } from 'vue'
 import { requireAdmin } from '@/models/auth'
 import { addUser as addUserModel, refUsers, getUserByID } from '@/models/User'
 import { refGetUserEntries } from '@/models/ActivityEntry'
@@ -8,6 +8,7 @@ const canAccess = ref(false)
 const users = refUsers()
 const selectedUserId = ref<number | null>(null)
 const showAddUserModal = ref(false)
+const permissionMessage = ref('')
 
 // Form for adding new user
 const newUser = ref({
@@ -31,8 +32,33 @@ const selectedUser = computed(() => {
   return getUserByID(selectedUserId.value)
 })
 
+// Permission check interval
+let permissionCheckInterval: number | null = null
+
+// Function to verify admin permissions
+const checkAdminPermission = () => {
+  const hasAccess = requireAdmin()
+
+  // If permissions changed from allowed to denied
+  if (canAccess.value && !hasAccess) {
+    permissionMessage.value = 'Your admin privileges have been revoked.'
+  }
+
+  canAccess.value = hasAccess
+}
+
 onMounted(() => {
   canAccess.value = requireAdmin()
+
+  // Set up periodic permission checks (every .5 seconds)
+  permissionCheckInterval = window.setInterval(checkAdminPermission, 500)
+})
+
+onUnmounted(() => {
+  // Clean up interval when component is destroyed
+  if (permissionCheckInterval !== null) {
+    clearInterval(permissionCheckInterval)
+  }
 })
 
 const openAddUserModal = () => {
@@ -124,6 +150,7 @@ const backToUserList = () => {
 
     <div v-else>
       <p class="has-text-danger">You are not authorized to access this page.</p>
+      <p v-if="permissionMessage" class="has-text-warning mt-2">{{ permissionMessage }}</p>
     </div>
   </main>
 </template>
