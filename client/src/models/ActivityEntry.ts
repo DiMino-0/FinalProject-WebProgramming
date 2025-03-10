@@ -14,7 +14,7 @@ const entries = ref<ActivityEntry[]>([
   {
     id: 1,
     title: 'Climbing Everest',
-    date: '2021-10-10',
+    date: '2025-03-10',
     duration: '2 hours',
     location: 'Mount Everest',
     picture: '/bike.png',
@@ -23,7 +23,7 @@ const entries = ref<ActivityEntry[]>([
   {
     id: 2,
     title: 'Crossing the Ocean!',
-    date: '2021-10-11',
+    date: '2025-03-06',
     duration: '1 hour',
     location: 'Pacific Ocean',
     picture: '/bike.png',
