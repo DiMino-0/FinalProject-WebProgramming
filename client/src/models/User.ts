@@ -135,6 +135,10 @@ export function getUserByID(uid: number): User | null {
   return UserManager.getInstance().getUserByID(uid)
 }
 
+export function getAllUsers(): User[] {
+  return UserManager.getInstance().getUsers().value
+}
+
 export function refGetCurrentUser() {
   return UserManager.getInstance().getCurrentUser()
 }

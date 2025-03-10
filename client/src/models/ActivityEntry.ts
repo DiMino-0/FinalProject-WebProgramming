@@ -1,5 +1,5 @@
 import { ref } from 'vue'
-import { refGetCurrentUser, getUserByID } from './User'
+import { refGetCurrentUser, getUserByID, getAllUsers } from './User'
 
 export interface ActivityEntry {
   id: number
@@ -104,4 +104,39 @@ export function initializeUserEntries(userId: number) {
     // Clone sample entries to avoid reference issues
     user.entries = JSON.parse(JSON.stringify(sampleEntries))
   }
+}
+
+// Get entries for all users except current user
+export function refGetOtherUsersEntries() {
+  const allUsers = getAllUsers()
+  const currentUser = refGetCurrentUser()
+
+  return ref({
+    get value() {
+      const allEntries: (ActivityEntry & { username?: string; userId?: number })[] = []
+
+      allUsers.forEach((user) => {
+        // Skip the current user's entries
+        if (currentUser.value && user.uid === currentUser.value.uid) {
+          return
+        }
+
+        if (user && user.entries && user.entries.length > 0) {
+          // Add username to each entry for display
+          const entriesWithUserInfo = user.entries.map((entry) => ({
+            ...entry,
+            username: user.username,
+            userId: user.uid,
+          }))
+
+          allEntries.push(...entriesWithUserInfo)
+        }
+      })
+
+      // Sort by date (newest first)
+      return allEntries.sort((a, b) => {
+        return new Date(b.date).getTime() - new Date(a.date).getTime()
+      })
+    },
+  })
 }
