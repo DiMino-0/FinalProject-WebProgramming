@@ -7,7 +7,7 @@ const showLoginPopUp = ref(false)
 <template>
   <div class="navbar-item">
     <div
-      class="button is-primary"
+      class="button is-info"
       v-bind:class="{ 'is-active': showLoginPopUp, 'is-clipped': showLoginPopUp }"
       @click="showLoginPopUp = !showLoginPopUp"
     >

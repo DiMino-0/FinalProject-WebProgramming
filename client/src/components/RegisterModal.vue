@@ -7,7 +7,7 @@ const showRegisterPopUp = ref(false)
 <template>
   <div class="navbar-item">
     <div
-      class="button is-primary"
+      class="button is-warning"
       v-bind:class="{ 'is-active': showRegisterPopUp, 'is-clipped': showRegisterPopUp }"
       @click="showRegisterPopUp = !showRegisterPopUp"
     >

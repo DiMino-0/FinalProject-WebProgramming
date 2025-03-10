@@ -1,9 +1,19 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import LoginPopup from './LoginModal.vue'
 import RegisterPopup from './RegisterModal.vue'
+import { refGetCurrentUser, setCurrentUser } from '@/models/User'
 
 const showBurger = ref(false)
+const currentUser = refGetCurrentUser()
+
+const isLoggedIn = computed(() => {
+  return currentUser.value !== null
+})
+
+const signOut = () => {
+  setCurrentUser(null)
+}
 </script>
 
 <template>
@@ -40,11 +50,17 @@ const showBurger = ref(false)
 
           <RouterLink to="/admin" class="navbar-item">Admin</RouterLink>
         </div>
-      </div>
 
-      <div class="navbar-end">
-        <LoginPopup />
-        <RegisterPopup />
+        <div class="navbar-end">
+          <div class="navbar-item" v-if="isLoggedIn">
+            <span class="mr-2">Welcome, {{ currentUser?.username }}</span>
+            <button class="button is-light" @click="signOut">Sign Out</button>
+          </div>
+          <template v-else>
+            <LoginPopup />
+            <RegisterPopup />
+          </template>
+        </div>
       </div>
     </div>
   </nav>

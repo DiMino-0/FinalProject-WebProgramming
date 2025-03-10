@@ -64,7 +64,7 @@ class UserManager {
     return this.currentUser
   }
 
-  setCurrentUser(user: User) {
+  setCurrentUser(user: User | null) {
     this.currentUser.value = user
   }
 
