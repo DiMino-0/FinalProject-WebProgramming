@@ -1,5 +1,18 @@
 <script setup lang="ts">
-defineProps(['title', 'date', 'duration', 'location', 'type', 'picture'])
+import { ref } from 'vue'
+defineProps(['id', 'title', 'date', 'duration', 'location', 'type', 'picture'])
+const emit = defineEmits(['delete'])
+
+const showConfirm = ref(false)
+
+const handleDelete = (id: number) => {
+  showConfirm.value = true
+}
+
+const confirmDelete = (id: number) => {
+  emit('delete', id)
+  showConfirm.value = false
+}
 </script>
 
 <template>
@@ -30,15 +43,29 @@ defineProps(['title', 'date', 'duration', 'location', 'type', 'picture'])
               <i class="fas fa-edit" aria-hidden="true"></i>
             </span>
           </a>
-          <a class="level-item" aria-label="delete">
+          <a class="level-item" aria-label="delete" @click="handleDelete(id)">
             <span class="icon is-small">
-              <i class="fas fa-times" aria-hidden="true" style="color: white"></i>
+              <i class="fas fa-times" aria-hidden="true" style="color: red"></i>
             </span>
           </a>
         </div>
       </nav>
     </article>
+
+    <!-- Confirmation Dialog -->
+    <div v-if="showConfirm" class="notification is-danger">
+      <button class="delete" @click="showConfirm = false"></button>
+      <p class="mb-2">Are you sure you want to delete this workout?</p>
+      <div class="buttons">
+        <button class="button is-danger" @click="confirmDelete(id)">Delete</button>
+        <button class="button" @click="showConfirm = false">Cancel</button>
+      </div>
+    </div>
   </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+.notification {
+  margin-top: 1rem;
+}
+</style>

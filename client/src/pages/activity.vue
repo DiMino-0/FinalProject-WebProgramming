@@ -2,10 +2,19 @@
 import { ref } from 'vue'
 import AddWorkoutModal from '@/components/AddWorkoutModal.vue'
 import EntryContainer from '@/components/EntryContainer.vue'
-import { refGetEntries } from '@/models/ActivityEntry'
+import { refGetEntries, addEntry, deleteEntry, type ActivityEntry } from '@/models/ActivityEntry'
 
 const entries = refGetEntries()
 const showAddWorkoutModal = ref(false)
+
+const handleAddEntry = (entry: ActivityEntry) => {
+  addEntry(entry)
+  showAddWorkoutModal.value = false
+}
+
+const handleDelete = (id: number) => {
+  deleteEntry(id)
+}
 </script>
 
 <template>
@@ -27,16 +36,22 @@ const showAddWorkoutModal = ref(false)
         <EntryContainer
           v-for="entry in entries"
           :key="entry.id"
+          :id="entry.id"
           :title="entry.title"
           :date="entry.date"
           :duration="entry.duration"
           :location="entry.location"
           :picture="entry.picture"
           :type="entry.type"
+          @delete="handleDelete"
         />
       </div>
     </section>
-    <AddWorkoutModal v-model="showAddWorkoutModal" @close="showAddWorkoutModal = false" />
+    <AddWorkoutModal
+      v-model="showAddWorkoutModal"
+      @close="showAddWorkoutModal = false"
+      @add-entry="handleAddEntry"
+    />
   </main>
 </template>
 

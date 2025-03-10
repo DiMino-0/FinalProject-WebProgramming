@@ -47,3 +47,10 @@ export function refGetEntries() {
 export function addEntry(entry: ActivityEntry) {
   entries.value.push(entry)
 }
+
+export function deleteEntry(id: number) {
+  const index = entries.value.findIndex((entry) => entry.id === id)
+  if (index !== -1) {
+    entries.value.splice(index, 1)
+  }
+}
