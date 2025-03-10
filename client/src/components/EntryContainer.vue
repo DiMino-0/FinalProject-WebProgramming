@@ -1,5 +1,5 @@
 <script setup lang="ts">
-defineProps(['title', 'date', 'duration', 'location', 'picture', 'type'])
+defineProps(['title', 'date', 'duration', 'location', 'type', 'picture'])
 </script>
 
 <template>

@@ -43,3 +43,7 @@ const entries = ref<ActivityEntry[]>([
 export function refGetEntries() {
   return entries
 }
+
+export function addEntry(entry: ActivityEntry) {
+  entries.value.push(entry)
+}

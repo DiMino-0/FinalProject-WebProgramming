@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import LoginPopup from './LoginPopup.vue'
-import RegisterPopup from './RegisterPopup.vue'
+import LoginPopup from './LoginModal.vue'
+import RegisterPopup from './RegisterModal.vue'
 
 const showBurger = ref(false)
 </script>

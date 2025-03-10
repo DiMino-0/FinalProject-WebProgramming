@@ -1,8 +1,11 @@
 <script setup lang="ts">
+import { ref } from 'vue'
+import AddWorkoutModal from '@/components/AddWorkoutModal.vue'
 import EntryContainer from '@/components/EntryContainer.vue'
 import { refGetEntries } from '@/models/ActivityEntry'
 
 const entries = refGetEntries()
+const showAddWorkoutModal = ref(false)
 </script>
 
 <template>
@@ -11,7 +14,12 @@ const entries = refGetEntries()
       <div class="container block">
         <h1 class="title is-1 has-text-black">My Activity Log</h1>
         <h2 class="subtitle workout-button">
-          <button class="button is-primary">Add Workout</button>
+          <button class="button is-primary" @click="showAddWorkoutModal = true">
+            <span class="icon is-small">
+              <i class="fas fa-plus"></i>
+            </span>
+            <span>Add Entry</span>
+          </button>
         </h2>
       </div>
 
@@ -28,6 +36,7 @@ const entries = refGetEntries()
         />
       </div>
     </section>
+    <AddWorkoutModal v-model="showAddWorkoutModal" @close="showAddWorkoutModal = false" />
   </main>
 </template>
 
