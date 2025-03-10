@@ -1,18 +1,23 @@
 <script setup lang="ts">
-import { refGetCurrentUser } from '@/models/User'
+import { ref, onMounted } from 'vue'
+import { requireAdmin } from '@/models/auth'
 
-const userRole = refGetCurrentUser().value?.role
+const canAccess = ref(false)
+
+onMounted(() => {
+  canAccess.value = requireAdmin()
+})
 </script>
 
 <template>
   <main>
-    <div class="admin body-container" v-if="userRole === 'admin'">
-      <h1 class="title is-1 has-text-black">
-        Here you can manage users, if you have the correct role
-      </h1>
+    <div class="admin body-container" v-if="canAccess">
+      <h1 class="title is-1 has-text-black">Admin Panel</h1>
+      // ... admin content here ...
     </div>
     <div class="body-container" v-else>
-      <h1 class="title is-1 has-text-black">You are not authorized to view this page</h1>
+      <h1 class="title is-1 has-text-black">Access Denied</h1>
+      <p class="subtitle">You must be an admin to view this page.</p>
     </div>
   </main>
 </template>

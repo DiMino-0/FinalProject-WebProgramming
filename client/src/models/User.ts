@@ -11,62 +11,101 @@ interface User {
 }
 
 class UserManager {
-  static userID: number = 0
-  static roles = ['admin', 'user']
-  static defaultRole = 'user'
-  static listOfUsers = ref<User[]>([
-    {
-      uid: -1,
-      username: 'JohnAdmin',
-      email: 'johnadmin@temporary.com',
-      password: 'admin1234',
-      role: 'admin',
-      entries: [],
-    },
-    {
-      uid: -2,
-      username: 'JohnUser',
-      email: 'johnuser@temporary.com',
-      password: 'user1234',
-      role: 'user',
-      entries: [],
-    },
-  ])
-  static currentUser = ref<User | null>(getUserByID(-1))
+  private static instance: UserManager
+  private userID: number = 0
+  private roles = ['admin', 'user']
+  private defaultRole = 'user'
+  private listOfUsers = ref<User[]>([])
+  private currentUser = ref<User | null>(null)
 
-  static generateID() {
+  private constructor() {
+    // Initialize with default users
+    this.listOfUsers.value = [
+      {
+        uid: -1,
+        username: 'JohnAdmin',
+        email: 'johnadmin@temporary.com',
+        password: 'admin1234',
+        role: 'admin',
+        entries: [],
+      },
+      {
+        uid: -2,
+        username: 'JohnUser',
+        email: 'johnuser@temporary.com',
+        password: 'user1234',
+        role: 'user',
+        entries: [],
+      },
+    ]
+    this.currentUser.value = this.getUserByID(-1)
+  }
+
+  static getInstance(): UserManager {
+    if (!UserManager.instance) {
+      UserManager.instance = new UserManager()
+    }
+    return UserManager.instance
+  }
+
+  private generateID(): number {
     return this.userID++
+  }
+
+  getUserByID(uid: number): User | null {
+    return this.listOfUsers.value.find((user) => user.uid === uid) || null
+  }
+
+  getUsers() {
+    return this.listOfUsers
+  }
+
+  getCurrentUser() {
+    return this.currentUser
+  }
+
+  setCurrentUser(user: User) {
+    this.currentUser.value = user
+  }
+
+  addUser(username: string, email: string, password: string, role?: string) {
+    const uid = this.generateID()
+    this.listOfUsers.value.push({
+      uid,
+      username,
+      email,
+      password,
+      role: role || this.defaultRole,
+      entries: [],
+    })
+  }
+
+  removeUser(uid: number) {
+    this.listOfUsers.value = this.listOfUsers.value.filter((user) => user.uid !== uid)
   }
 }
 
+// Export wrapper functions
 export function refUsers() {
-  return UserManager.listOfUsers
+  return UserManager.getInstance().getUsers()
 }
 
 export function getUserByID(uid: number): User | null {
-  return UserManager.listOfUsers.value.find((user) => user.uid === uid) || null
+  return UserManager.getInstance().getUserByID(uid)
 }
 
 export function refGetCurrentUser() {
-  return UserManager.currentUser
+  return UserManager.getInstance().getCurrentUser()
 }
 
 export function setCurrentUser(user: User) {
-  UserManager.currentUser.value = user
+  UserManager.getInstance().setCurrentUser(user)
 }
 
 export function addUser(username: string, email: string, password: string, role?: string) {
-  const uid = UserManager.generateID()
-  UserManager.listOfUsers.value.push({
-    uid,
-    username,
-    email,
-    password,
-    role: role || UserManager.defaultRole,
-    entries: [],
-  })
+  UserManager.getInstance().addUser(username, email, password, role)
 }
 
 export function removeUser(uid: number) {
-  UserManager.listOfUsers.value = UserManager.listOfUsers.value.filter((user) => user.uid !== uid)
+  UserManager.getInstance().removeUser(uid)
 }

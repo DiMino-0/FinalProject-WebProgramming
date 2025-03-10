@@ -1,7 +1,7 @@
 <script setup lang="ts"></script>
 
 <template>
-  <main>
+  <main class="index">
     <section class="index body-container">
       <div class="container has-text-black">
         <h1 class="title is-1 has-text-black">Welcome to the Fitness Tracker</h1>

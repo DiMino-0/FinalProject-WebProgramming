@@ -7,15 +7,15 @@ const entries = refGetEntries()
 
 <template>
   <main>
-    <section class="activity body-container">
+    <section class="ActivityView body-container">
       <div class="container block">
         <h1 class="title is-1 has-text-black">My Activity Log</h1>
-        <h2 class="subtitle">
+        <h2 class="subtitle workout-button">
           <button class="button is-primary">Add Workout</button>
         </h2>
       </div>
 
-      <div class="activity container">
+      <div class="ActivityEntries container">
         <EntryContainer
           v-for="entry in entries"
           :key="entry.id"
@@ -35,5 +35,8 @@ const entries = refGetEntries()
 .body-container {
   margin: 20px 20px 20px 20px;
   background-color: white;
+}
+.workout-button {
+  margin-top: 20px;
 }
 </style>
