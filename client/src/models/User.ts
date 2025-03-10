@@ -98,7 +98,7 @@ export function refGetCurrentUser() {
   return UserManager.getInstance().getCurrentUser()
 }
 
-export function setCurrentUser(user: User) {
+export function setCurrentUser(user: User | null) {
   UserManager.getInstance().setCurrentUser(user)
 }
 

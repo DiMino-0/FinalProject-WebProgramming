@@ -7,8 +7,8 @@
         <h1 class="title is-1 has-text-black">Welcome to the Fitness Tracker</h1>
         <h2 class="subtitle has-text-black">
           <p>
-            This is a simple activity tracker that allows you to log your workouts and see what your
-            friends are up to.
+            You can add and manage your activities, view a statstics breakdown, and add/manage users
+            if you are an admin.
           </p>
         </h2>
       </div>
