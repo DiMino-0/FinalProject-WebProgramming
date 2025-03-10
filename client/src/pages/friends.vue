@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { ref } from 'vue'
 import { refGetOtherUsersEntries } from '@/models/ActivityEntry'
 import { refGetCurrentUser } from '@/models/User'
 

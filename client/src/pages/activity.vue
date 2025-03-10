@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed } from 'vue'
 import { refGetCurrentUserEntries, addEntry, deleteEntry } from '@/models/ActivityEntry'
 import { refGetCurrentUser } from '@/models/User'
 

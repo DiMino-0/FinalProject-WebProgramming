@@ -1,43 +1,35 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
-import { refGetUserEntries, type ActivityEntry } from '@/models/ActivityEntry'
-
-// Get actual activity entries instead of mock data
-const userId = 1 // Replace with actual user ID
-const activityEntries = refGetUserEntries(userId)
+import { computed } from 'vue'
+import { refGetCurrentUserEntries } from '@/models/ActivityEntry'
+// Get activity entries for the current user
+const userEntries = refGetCurrentUserEntries()
 
 // Convert the activity entries to the format our calculations expect
 const workouts = computed(() => {
-  return Array.isArray(activityEntries.value)
-    ? activityEntries.value.map((entry: { duration: string; type: string; date: string }) => {
-        // Parse duration string to minutes
-        let durationMin = 0
-        if (entry.duration.includes('hour')) {
-          const hours = parseInt(entry.duration) || 0
-          durationMin = hours * 60
-        } else {
-          durationMin = parseInt(entry.duration) || 0
-        }
+  // Access the actual entries array properly
+  const entries = userEntries.value?.value || []
 
-        // Estimate distance based on activity type and duration (just a placeholder)
-        // In a real app, you might want to use actual distance data
-        const avgSpeedKmPerHour =
-          entry.type === 'Running'
-            ? 8
-            : entry.type === 'Swimming'
-              ? 2
-              : entry.type === 'Hiking'
-                ? 5
-                : 4
-        const distance = (durationMin / 60) * avgSpeedKmPerHour
+  return entries.map((entry: { duration: string; type: string; date: string }) => {
+    // Parse duration string to minutes
+    let durationMin = 0
+    if (entry.duration.includes('hour')) {
+      const hours = parseInt(entry.duration) || 0
+      durationMin = hours * 60
+    } else {
+      durationMin = parseInt(entry.duration) || 0
+    }
 
-        return {
-          date: entry.date,
-          duration: durationMin,
-          distance: distance,
-        }
-      })
-    : []
+    // Estimate distance based on activity type and duration
+    const avgSpeedKmPerHour =
+      entry.type === 'Running' ? 8 : entry.type === 'Swimming' ? 2 : entry.type === 'Hiking' ? 5 : 4
+    const distance = (durationMin / 60) * avgSpeedKmPerHour
+
+    return {
+      date: entry.date,
+      duration: durationMin,
+      distance: distance,
+    }
+  })
 })
 
 const today = computed(() => {

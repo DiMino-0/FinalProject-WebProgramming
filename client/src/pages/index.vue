@@ -13,7 +13,6 @@
       </div>
 
       <section class="container block">
-        <!-- show off features flashily -->
         <div class="columns">
           <div class="column">
             <div class="card">

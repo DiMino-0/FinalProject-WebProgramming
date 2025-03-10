@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, computed, onUnmounted, watch } from 'vue'
+import { ref, onMounted, computed, onUnmounted } from 'vue'
 import { requireAdmin } from '@/models/auth'
 import { addUser as addUserModel, refUsers, getUserByID } from '@/models/User'
 import { refGetUserEntries } from '@/models/ActivityEntry'
