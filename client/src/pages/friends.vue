@@ -73,7 +73,6 @@ function formatDate(dateString: string) {
 <style scoped>
 .activity-timeline {
   max-width: 800px;
-  margin: 0 auto;
 }
 
 .activities-container {

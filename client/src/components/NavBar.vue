@@ -66,4 +66,12 @@ const signOut = () => {
   </nav>
 </template>
 
-<style scoped></style>
+<style scoped>
+.navbar-burger span {
+  background-color: black;
+  height: 2px;
+}
+.navbar {
+  background-color: #32ae9b;
+}
+</style>
