@@ -1,66 +1,175 @@
 <script setup lang="ts">
-import { ref } from 'vue'
-import AddWorkoutModal from '@/components/AddWorkoutModal.vue'
-import EntryContainer from '@/components/EntryContainer.vue'
-import { refGetEntries, addEntry, deleteEntry, type ActivityEntry } from '@/models/ActivityEntry'
+import { ref, computed, onMounted } from 'vue'
+import { refGetCurrentUserEntries, addEntry, deleteEntry } from '@/models/ActivityEntry'
+import { refGetCurrentUser } from '@/models/User'
 
-const entries = refGetEntries()
-const showAddWorkoutModal = ref(false)
+const currentUser = refGetCurrentUser()
+const entries = refGetCurrentUserEntries()
 
-const handleAddEntry = (entry: ActivityEntry) => {
-  addEntry(entry)
-  showAddWorkoutModal.value = false
+// New entry form
+const newEntry = ref({
+  title: '',
+  date: new Date().toISOString().split('T')[0],
+  duration: '1 hour',
+  location: '',
+  picture: '/bike.png',
+  type: 'Running',
+})
+
+// Activity types for dropdown
+const activityTypes = ['Running', 'Swimming', 'Cycling', 'Hiking', 'Walking', 'Gym', 'Other']
+
+// Submit new entry
+const submitEntry = () => {
+  if (newEntry.value.title && newEntry.value.date && newEntry.value.duration) {
+    addEntry(newEntry.value)
+    // Reset form
+    newEntry.value = {
+      title: '',
+      date: new Date().toISOString().split('T')[0],
+      duration: '',
+      location: '',
+      picture: '/bike.png',
+      type: '',
+    }
+  }
 }
 
-const handleDelete = (id: number) => {
+// Delete an entry
+const removeEntry = (id: number) => {
   deleteEntry(id)
 }
+
+// Check if user is logged in
+const isLoggedIn = computed(() => !!currentUser.value)
 </script>
 
 <template>
   <main>
-    <section class="ActivityView body-container">
-      <div class="container block">
-        <h1 class="title is-1 has-text-black">My Activity Log</h1>
-        <h2 class="subtitle workout-button">
-          <button class="button is-primary" @click="showAddWorkoutModal = true">
-            <span class="icon is-small">
-              <i class="fas fa-plus"></i>
-            </span>
-            <span>Add Entry</span>
-          </button>
-        </h2>
+    <div v-if="isLoggedIn">
+      <h1 class="title is-1 has-text-black">
+        Welcome to your Activity Log, {{ currentUser?.username }}
+      </h1>
+      <h2 class="subtitle is-4 mt-2 has-text-black"></h2>
+
+      <div class="box">
+        <h3 class="title is-4">Add New Activity</h3>
+        <div class="field">
+          <label class="label">Title</label>
+          <div class="control">
+            <input
+              class="input"
+              type="text"
+              v-model="newEntry.title"
+              placeholder="Activity title"
+            />
+          </div>
+        </div>
+
+        <div class="columns">
+          <div class="column">
+            <div class="field">
+              <label class="label">Date</label>
+              <div class="control">
+                <input class="input" type="date" v-model="newEntry.date" />
+              </div>
+            </div>
+          </div>
+
+          <div class="column">
+            <div class="field">
+              <label class="label">Duration</label>
+              <div class="control">
+                <input
+                  class="input"
+                  type="text"
+                  v-model="newEntry.duration"
+                  placeholder="e.g. 30 minutes"
+                />
+              </div>
+            </div>
+          </div>
+
+          <div class="column">
+            <div class="field">
+              <label class="label">Type</label>
+              <div class="control">
+                <div class="select is-fullwidth">
+                  <select v-model="newEntry.type">
+                    <option v-for="type in activityTypes" :key="type" :value="type">
+                      {{ type }}
+                    </option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="label">Location (optional)</label>
+          <div class="control">
+            <input
+              class="input"
+              type="text"
+              v-model="newEntry.location"
+              placeholder="Where did you do this activity?"
+            />
+          </div>
+        </div>
+
+        <div class="field">
+          <div class="control">
+            <button class="button is-primary" @click="submitEntry">Add Activity</button>
+          </div>
+        </div>
       </div>
 
-      <div class="ActivityEntries container">
-        <EntryContainer
-          v-for="entry in entries"
-          :key="entry.id"
-          :id="entry.id"
-          :title="entry.title"
-          :date="entry.date"
-          :duration="entry.duration"
-          :location="entry.location"
-          :picture="entry.picture"
-          :type="entry.type"
-          @delete="handleDelete"
-        />
+      <!-- Display entries -->
+      <div class="mt-4">
+        <h3 class="title is-2 has-text-black">Your Activities</h3>
+
+        <div v-if="entries.value.length === 0" class="notification is-info">
+          You haven't logged any activities yet. Add your first one above!
+        </div>
+
+        <div class="columns is-multiline">
+          <div v-for="entry in entries.value" :key="entry.id" class="column is-4">
+            <div class="card">
+              <div class="card-header">
+                <p class="card-header-title">{{ entry.title }}</p>
+              </div>
+              <div class="card-content">
+                <div class="content">
+                  <p><strong>Date:</strong> {{ entry.date }}</p>
+                  <p><strong>Duration:</strong> {{ entry.duration }}</p>
+                  <p><strong>Type:</strong> {{ entry.type }}</p>
+                  <p v-if="entry.location"><strong>Location:</strong> {{ entry.location }}</p>
+                </div>
+              </div>
+              <footer class="card-footer">
+                <a href="#" class="card-footer-item" @click="removeEntry(entry.id)">Delete</a>
+              </footer>
+            </div>
+          </div>
+        </div>
       </div>
-    </section>
-    <AddWorkoutModal
-      v-model="showAddWorkoutModal"
-      @close="showAddWorkoutModal = false"
-      @add-entry="handleAddEntry"
-    />
+    </div>
+
+    <div v-else class="notification is-warning">
+      Please log in to view and manage your activities.
+    </div>
   </main>
 </template>
 
 <style scoped>
-.body-container {
-  margin: 20px 20px 20px 20px;
-  background-color: white;
+.card {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
 }
-.workout-button {
-  margin-top: 20px;
+
+.card-content {
+  flex-grow: 1;
 }
 </style>

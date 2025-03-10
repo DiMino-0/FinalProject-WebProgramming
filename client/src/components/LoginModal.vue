@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { refUsers, setCurrentUser } from '@/models/User'
+import { initializeUserEntries } from '@/models/ActivityEntry'
 
 // Use the actual list of users from User.ts
 const users = refUsers()
@@ -22,12 +23,16 @@ const login = () => {
   if (selectedUser.value) {
     // Set the current user in the system
     setCurrentUser(selectedUser.value)
+    // Initialize entries if this is the first login
+    initializeUserEntries(selectedUser.value.uid)
     console.log('Logged in as:', selectedUser.value.username)
   } else {
     // Find user by email/password
     const user = users.value.find((u) => u.email === email.value && u.password === password.value)
     if (user) {
       setCurrentUser(user)
+      // Initialize entries if this is the first login
+      initializeUserEntries(user.uid)
       console.log('Logged in as:', user.username)
     } else {
       console.log('Invalid credentials')

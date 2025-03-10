@@ -1,4 +1,5 @@
 import { ref } from 'vue'
+import { refGetCurrentUser, getUserByID } from './User'
 
 export interface ActivityEntry {
   id: number
@@ -10,7 +11,8 @@ export interface ActivityEntry {
   type: string
 }
 
-const entries = ref<ActivityEntry[]>([
+// Keep this as sample data for new users
+const sampleEntries: ActivityEntry[] = [
   {
     id: 1,
     title: 'Climbing Everest',
@@ -38,19 +40,68 @@ const entries = ref<ActivityEntry[]>([
     picture: '/bike.png',
     type: 'Running',
   },
-])
+]
 
-export function refGetEntries() {
-  return entries
+// Maintain a counter for unique IDs across all entries
+let nextEntryId = 4 // Start after the sample entries
+
+// Get entries for the currently logged in user
+export function refGetCurrentUserEntries() {
+  const currentUser = refGetCurrentUser()
+  return ref({
+    get value() {
+      return currentUser.value?.entries || []
+    },
+    set value(newEntries) {
+      if (currentUser.value) {
+        currentUser.value.entries = newEntries
+      }
+    },
+  })
 }
 
-export function addEntry(entry: ActivityEntry) {
-  entries.value.push(entry)
+// Get entries for a specific user
+export function refGetUserEntries(uid: number) {
+  const user = getUserByID(uid)
+  return ref({
+    get value() {
+      return user?.entries || []
+    },
+  })
 }
 
+// Add entry to current user's entries
+export function addEntry(entry: Omit<ActivityEntry, 'id'>) {
+  const currentUser = refGetCurrentUser()
+  if (currentUser.value) {
+    const newEntry = {
+      ...entry,
+      id: nextEntryId++,
+    }
+    currentUser.value.entries.push(newEntry)
+    return newEntry
+  }
+  return null
+}
+
+// Delete entry from current user's entries
 export function deleteEntry(id: number) {
-  const index = entries.value.findIndex((entry) => entry.id === id)
-  if (index !== -1) {
-    entries.value.splice(index, 1)
+  const currentUser = refGetCurrentUser()
+  if (currentUser.value) {
+    const index = currentUser.value.entries.findIndex((entry) => entry.id === id)
+    if (index !== -1) {
+      currentUser.value.entries.splice(index, 1)
+      return true
+    }
+  }
+  return false
+}
+
+// Initialize a new user with sample entries
+export function initializeUserEntries(userId: number) {
+  const user = getUserByID(userId)
+  if (user && user.entries.length === 0) {
+    // Clone sample entries to avoid reference issues
+    user.entries = JSON.parse(JSON.stringify(sampleEntries))
   }
 }

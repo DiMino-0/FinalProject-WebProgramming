@@ -1,5 +1,6 @@
 import { ref } from 'vue'
 import type { ActivityEntry } from './ActivityEntry'
+import { initializeUserEntries } from './ActivityEntry'
 
 interface User {
   uid: number
@@ -12,7 +13,7 @@ interface User {
 
 class UserManager {
   private static instance: UserManager
-  private userID: number = 0
+  private userID: number = 1 // Changed from 0 to 1 to ensure positive IDs
   private roles = ['admin', 'user']
   private defaultRole = 'user'
   private listOfUsers = ref<User[]>([])
@@ -38,7 +39,22 @@ class UserManager {
         entries: [],
       },
     ]
-    this.currentUser.value = this.getUserByID(-1)
+    this.currentUser.value = null
+
+    // Delay initialization to prevent potential circular dependency issues
+    setTimeout(() => {
+      this.initializeDefaultUserEntries()
+    }, 0)
+  }
+
+  // New method to initialize entries separately from constructor
+  private initializeDefaultUserEntries() {
+    try {
+      initializeUserEntries(-1)
+      initializeUserEntries(-2)
+    } catch (error) {
+      console.error('Error initializing user entries:', error)
+    }
   }
 
   static getInstance(): UserManager {
@@ -49,6 +65,7 @@ class UserManager {
   }
 
   private generateID(): number {
+    // Changed to return a unique positive ID that won't conflict with predefined negative IDs
     return this.userID++
   }
 
@@ -78,6 +95,30 @@ class UserManager {
       role: role || this.defaultRole,
       entries: [],
     })
+    return uid // Return the new user ID
+  }
+
+  // New method to add an entry to a specific user
+  addEntryToUser(userId: number, entry: ActivityEntry) {
+    const user = this.getUserByID(userId)
+    if (user) {
+      user.entries.push(entry)
+      return true
+    }
+    return false
+  }
+
+  // New method to remove an entry from a specific user
+  removeEntryFromUser(userId: number, entryId: number) {
+    const user = this.getUserByID(userId)
+    if (user) {
+      const index = user.entries.findIndex((e) => e.id === entryId)
+      if (index !== -1) {
+        user.entries.splice(index, 1)
+        return true
+      }
+    }
+    return false
   }
 
   removeUser(uid: number) {
@@ -103,9 +144,17 @@ export function setCurrentUser(user: User | null) {
 }
 
 export function addUser(username: string, email: string, password: string, role?: string) {
-  UserManager.getInstance().addUser(username, email, password, role)
+  return UserManager.getInstance().addUser(username, email, password, role)
 }
 
 export function removeUser(uid: number) {
   UserManager.getInstance().removeUser(uid)
+}
+
+export function addEntryToUser(userId: number, entry: ActivityEntry) {
+  return UserManager.getInstance().addEntryToUser(userId, entry)
+}
+
+export function removeEntryFromUser(userId: number, entryId: number) {
+  return UserManager.getInstance().removeEntryFromUser(userId, entryId)
 }

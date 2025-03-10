@@ -1,15 +1,69 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { requireAdmin } from '@/models/auth'
-import { addUser as addUserModel } from '@/models/User'
+import { addUser as addUserModel, refUsers, getUserByID } from '@/models/User'
+import { refGetUserEntries } from '@/models/ActivityEntry'
 
 const canAccess = ref(false)
+const users = refUsers()
+const selectedUserId = ref<number | null>(null)
+const showAddUserModal = ref(false)
+
+// Form for adding new user
+const newUser = ref({
+  username: '',
+  email: '',
+  password: '',
+  role: 'user',
+})
+
+// Selected user's activities
+const selectedUserEntries = computed(() => {
+  if (selectedUserId.value === null) return []
+  const entries = refGetUserEntries(selectedUserId.value)
+  const result = Array.isArray(entries) ? entries : entries.value || []
+  return result as any[] // Type assertion to ensure length property is recognized
+})
+
+// Selected user details
+const selectedUser = computed(() => {
+  if (selectedUserId.value === null) return null
+  return getUserByID(selectedUserId.value)
+})
 
 onMounted(() => {
   canAccess.value = requireAdmin()
 })
-const addUser = (event: MouseEvent) => {
-  addUserModel('username', 'email', 'password', 'role')
+
+const openAddUserModal = () => {
+  showAddUserModal.value = true
+}
+
+const addUser = () => {
+  if (newUser.value.username && newUser.value.email && newUser.value.password) {
+    addUserModel(
+      newUser.value.username,
+      newUser.value.email,
+      newUser.value.password,
+      newUser.value.role,
+    )
+    showAddUserModal.value = false
+    // Reset form
+    newUser.value = {
+      username: '',
+      email: '',
+      password: '',
+      role: 'user',
+    }
+  }
+}
+
+const viewUserActivities = (uid: number) => {
+  selectedUserId.value = uid
+}
+
+const backToUserList = () => {
+  selectedUserId.value = null
 }
 </script>
 
@@ -18,43 +72,64 @@ const addUser = (event: MouseEvent) => {
     <div class="admin body-container" v-if="canAccess">
       <h1 class="title is-1 has-text-black">Admin Panel</h1>
 
-      <button class="button is-primary" @click="addUser">
-        <span class="icon is-small"><i class="fas fa-plus"></i> </span>
-        <span>Add User</span>
-      </button>
+      <!-- User management section -->
+      <div v-if="selectedUserId === null">
+        <button class="button is-primary" @click="openAddUserModal">
+          <span class="icon is-small"><i class="fas fa-plus"></i></span>
+          <span>Add User</span>
+        </button>
 
-      <section class="container mt-4">
-        <table class="table">
-          <thead>
-            <tr>
-              <th>UID</th>
-              <th>Username</th>
-              <th>Email</th>
-              <th>Role</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>-1</td>
-              <td>JohnAdmin</td>
-              <td>johnadmin@temporary.com</td>
-              <td>admin</td>
-            </tr>
-            <tr>
-              <td>-2</td>
-              <td>JohnUser</td>
-              <td>johnuser@temporary.com</td>
-              <td>user</td>
-            </tr>
-          </tbody>
-        </table>
-      </section>
+        <section class="container mt-4">
+          <table class="table is-fullwidth">
+            <thead>
+              <tr>
+                <th>UID</th>
+                <th>Username</th>
+                <th>Email</th>
+                <th>Role</th>
+                <th>Activities</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="user in users" :key="user.uid">
+                <td>{{ user.uid }}</td>
+                <td>{{ user.username }}</td>
+                <td>{{ user.email }}</td>
+                <td>{{ user.role }}</td>
+                <td>{{ user.entries.length }}</td>
+                <td>
+                  <button class="button is-small is-info" @click="viewUserActivities(user.uid)">
+                    View Activities
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+      </div>
+
+      <!-- User activities section -->
+      <div v-else>
+        <button class="button is-info mb-4" @click="backToUserList">
+          <span class="icon"><i class="fas fa-arrow-left"></i></span>
+          <span>Back to User List</span>
+        </button>
+
+        <div v-if="selectedUserEntries.length === 0" class="notification is-info">
+          This user hasn't logged any activities yet.
+        </div>
+      </div>
     </div>
-    <div class="body-container" v-else>
-      <h1 class="title is-1 has-text-black">Access Denied</h1>
-      <p class="subtitle">You must be an admin to view this page.</p>
+
+    <div v-else>
+      <p class="has-text-danger">You are not authorized to access this page.</p>
     </div>
   </main>
 </template>
 
-<style scoped></style>
+<style scoped>
+.admin {
+  padding: 1rem;
+}
+</style>
