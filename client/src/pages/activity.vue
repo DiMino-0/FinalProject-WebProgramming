@@ -48,14 +48,15 @@ const isLoggedIn = computed(() => !!currentUser.value)
   <main>
     <section class="activity body-container">
       <div class="container has-text-black">
-        <h1 class="title is-1 has-text-black">Your Activity Log</h1>
-        <h2 class="subtitle has-text-black">
-          <p>Manage your entries!</p>
-        </h2>
-
         <div class="container">
-          <div v-if="currentUser == null" class="notification is-warning login-required">
-            Please log in to view and manage your activities.
+          <div v-if="currentUser == null" class="container">
+            <h1 class="title is-1 has-text-black">The Activity Log</h1>
+            <h2 class="subtitle has-text-black">
+              <p>Manage your workout entries here!</p>
+            </h2>
+            <div class="notification is-warning login-required">
+              Please log in to view and manage your activities.
+            </div>
           </div>
           <div v-else-if="isLoggedIn">
             <h1 class="title is-1 has-text-black">

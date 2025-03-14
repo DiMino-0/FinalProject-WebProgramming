@@ -11,7 +11,6 @@ export interface ActivityEntry {
   type: string
 }
 
-// Keep this as sample data for new users
 const sampleEntries: ActivityEntry[] = [
   {
     id: 1,
@@ -43,7 +42,7 @@ const sampleEntries: ActivityEntry[] = [
 ]
 
 // Maintain a counter for unique IDs across all entries
-let nextEntryId = 4 // Start after the sample entries
+const nextEntryId = ref(4) // Start after the sample entries
 
 // Get entries for the currently logged in user
 export function refGetCurrentUserEntries() {
@@ -76,8 +75,9 @@ export function addEntry(entry: Omit<ActivityEntry, 'id'>) {
   if (currentUser.value) {
     const newEntry = {
       ...entry,
-      id: nextEntryId++,
+      id: nextEntryId.value,
     }
+    nextEntryId.value++
     currentUser.value.entries.push(newEntry)
     return newEntry
   }
@@ -101,7 +101,6 @@ export function deleteEntry(id: number) {
 export function initializeUserEntries(userId: number) {
   const user = getUserByID(userId)
   if (user && user.entries.length === 0) {
-    // Clone sample entries to avoid reference issues
     user.entries = JSON.parse(JSON.stringify(sampleEntries))
   }
 }

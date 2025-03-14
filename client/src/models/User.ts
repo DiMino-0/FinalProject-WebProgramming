@@ -2,7 +2,7 @@ import { ref } from 'vue'
 import type { ActivityEntry } from './ActivityEntry'
 import { initializeUserEntries } from './ActivityEntry'
 
-interface User {
+export interface User {
   uid: number
   username: string
   email: string
@@ -13,7 +13,7 @@ interface User {
 
 class UserManager {
   private static instance: UserManager
-  private userID: number = 1 // Changed from 0 to 1 to ensure positive IDs
+  private userID: number = 1
   private roles = ['admin', 'user']
   private defaultRole = 'user'
   private listOfUsers = ref<User[]>([])

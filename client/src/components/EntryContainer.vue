@@ -1,8 +1,17 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-defineProps(['id', 'title', 'date', 'duration', 'location', 'type', 'picture'])
-const emit = defineEmits(['delete'])
 
+const props = defineProps<{
+  id: number
+  title: string
+  date: string
+  duration: string
+  location?: string
+  type: string
+  picture?: string
+}>()
+
+const emit = defineEmits(['delete'])
 const showConfirm = ref(false)
 
 const handleDelete = (id: number) => {

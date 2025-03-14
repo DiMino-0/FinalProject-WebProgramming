@@ -1,17 +1,16 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { refUsers, setCurrentUser } from '@/models/User'
+import { refGetCurrentUser, refUsers, setCurrentUser, type User } from '@/models/User'
 import { initializeUserEntries } from '@/models/ActivityEntry'
 
-// Use the actual list of users from User.ts
 const users = refUsers()
 
 const showLoginPopUp = ref(false)
 const email = ref('')
 const password = ref('')
-const selectedUser = ref<any>(null)
+const selectedUser = refGetCurrentUser()
 
-const selectUser = (user: any) => {
+const selectUser = (user: User | null) => {
   if (user) {
     email.value = user.email
     password.value = user.password
@@ -23,7 +22,9 @@ const login = () => {
   if (selectedUser.value) {
     // Set the current user in the system
     setCurrentUser(selectedUser.value)
-    // Initialize entries if this is the first login
+    /**
+     * !REMOVE: Temporary code to initialize sample entries for the user
+     */
     initializeUserEntries(selectedUser.value.uid)
     console.log('Logged in as:', selectedUser.value.username)
   } else {
@@ -31,18 +32,23 @@ const login = () => {
     const user = users.value.find((u) => u.email === email.value && u.password === password.value)
     if (user) {
       setCurrentUser(user)
-      // Initialize entries if this is the first login
+      /**
+       * !REMOVE: Temporary code to initialize sample entries for the user
+       */
       initializeUserEntries(user.uid)
       console.log('Logged in as:', user.username)
     } else {
       console.log('Invalid credentials')
-      // Here you could show an error message
+      /**
+       * TODO: Show Error Message notification to user
+       */
     }
   }
   showLoginPopUp.value = false
 }
 </script>
 
+<!-- TODO: When  form submitted w/ login button, check for the user and log them in -->
 <template>
   <div class="navbar-item">
     <div

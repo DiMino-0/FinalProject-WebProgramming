@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { refGetCurrentUserEntries } from '@/models/ActivityEntry'
 // Get activity entries for the current user
 const userEntries = refGetCurrentUserEntries()
@@ -11,22 +11,22 @@ const workouts = computed(() => {
 
   return entries.map((entry: { duration: string; type: string; date: string }) => {
     // Parse duration string to minutes
-    let durationMin = 0
+    const durationMin = ref(0)
     if (entry.duration.includes('hour')) {
       const hours = parseInt(entry.duration) || 0
-      durationMin = hours * 60
+      durationMin.value = hours * 60
     } else {
-      durationMin = parseInt(entry.duration) || 0
+      durationMin.value = parseInt(entry.duration) || 0
     }
 
     // Estimate distance based on activity type and duration
     const avgSpeedKmPerHour =
       entry.type === 'Running' ? 8 : entry.type === 'Swimming' ? 2 : entry.type === 'Hiking' ? 5 : 4
-    const distance = (durationMin / 60) * avgSpeedKmPerHour
+    const distance = (durationMin.value / 60) * avgSpeedKmPerHour
 
     return {
       date: entry.date,
-      duration: durationMin,
+      duration: durationMin.value,
       distance: distance,
     }
   })

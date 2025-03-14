@@ -4,6 +4,7 @@ import { ref } from 'vue'
 const showRegisterPopUp = ref(false)
 </script>
 
+<!--TODO: Register a new user when the form is submitted-->
 <template>
   <div class="navbar-item">
     <div
