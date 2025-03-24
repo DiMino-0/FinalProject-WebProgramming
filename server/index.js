@@ -1,15 +1,7 @@
-/*
-This is a comment! 
-*/
-// Load the http module to create an http server.
-const http = require("http");
-const PORT = 3000;
+const express = require("express");
+const app = express();
+const PORT = 8000;
 
-const server = http.createServer((req, res) => {
-  res.writeHead(200, { "Content-Type": "text/plain" });
-  res.end("Midterm?\n");
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
 });
-
-server.listen(PORT, () =>
-  console.log(`Server running at http://localhost:${PORT}/`)
-);
