@@ -8,7 +8,7 @@ const PORT = 8000;
 app.use(express.json());
 
 app.use("/", express.static("dist"));
-//TODO: controller for posts
+//TODO: controller for Users (maybe tie into admin page user view) and Posts (Viewing your own vs friends posts may look different)
 
 //error handling middleware
 app.use((err, req, res, next) => {
