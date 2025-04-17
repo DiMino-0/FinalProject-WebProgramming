@@ -6,11 +6,9 @@ on:
 jobs:
   accessRenderEndpoint:
     runs-on: ubuntu-latest
+    environment: Render
     steps:
       - name: Fetch Render Deployments
-        env:
-          RENDER_SERVICE_KEY: ${{ secrets.RENDER_SERVICE_KEY }}
-          RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
         run: >-
           curl 
             --request GET \
