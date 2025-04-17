@@ -7,9 +7,7 @@ async function getAll() {
   if (list.error) {
     throw new CustomError(error.message, statusCodes.INTERNAL_SERVER_ERROR);
   }
-  return {
-    data: list.data,
-  };
+  return list;
 }
 
 async function create(item) {
@@ -19,10 +17,43 @@ async function create(item) {
   if (error) {
     throw error;
   }
-  return newItem;
+  return {
+    message: `Item with ID ${id} successfully created.`,
+    data: newItem,
+  };
+}
+
+async function update(id, item) {
+  const { data: updatedItem, error } = await connect()
+    .from(TABLE_NAME)
+    .update(item)
+    .eq("id", id);
+  if (error) {
+    throw error;
+  }
+  return {
+    message: `Item with ID ${id} successfully updated.`,
+    data: updatedItem,
+  };
+}
+
+async function remove(id) {
+  const { data: deletedItem, error } = await connect()
+    .from(TABLE_NAME)
+    .delete()
+    .eq("id", id);
+  if (error) {
+    throw error;
+  }
+  return {
+    message: `Item with ID ${id} successfully deleted.`,
+    data: deletedItem,
+  };
 }
 
 module.exports = {
   getAll,
   create,
+  update,
+  remove,
 };
