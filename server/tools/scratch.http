@@ -1,10 +1,23 @@
-@rootUrl = http://localhost:3000
+@rootUrl = http://localhost:3000/
 
 ### GET
-GET {{rootUrl}}/api/v1/dummy
+GET {{rootUrl}}api/v1/dummy/
 
 ### POST
+POST {{rootUrl}}api/v1/dummy/
+Content-Type: application/json
+
+{
+  "blurb": "blurb test"
+}
 
 ### PATCH
+PATCH {{rootUrl}}api/v1/dummy/3
+Content-Type: application/json
+
+{
+  "blurb": "blurb testing"
+}
 
 ### DELETE
+DELETE {{rootUrl}}api/v1/dummy/1
