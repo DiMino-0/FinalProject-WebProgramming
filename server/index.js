@@ -1,8 +1,8 @@
 const express = require("express");
 const { statusCodes } = require("./models/errors");
 const app = express();
-//TODO: Use the port our hosting provides
-const PORT = 8000;
+const PORT = process.env.PORT ?? 3000;
+require("dotenv").config();
 
 // Middleware
 app.use(express.json());
@@ -23,5 +23,5 @@ app.use((err, req, res, next) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
+  console.log(`Server is running at http://localhost:${PORT}`);
 });
