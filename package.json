@@ -6,8 +6,8 @@
   "scripts": {
     "start": "node server/index.js",
     "dev": "nodemon server/index.js --watch server",
-    "build:client": "npm run build --prefix client",
-    "build": "npm i && npm run build:client"
+    "build:client": "pnpm run build --prefix client",
+    "build": "pnpm i --prefix client && pnpm run build:client"
   },
   "keywords": [],
   "author": "",
