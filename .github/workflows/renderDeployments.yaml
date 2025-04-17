@@ -1,0 +1,15 @@
+name: RetrieveDeployments
+on:
+  push:
+    branches:
+      - main
+jobs:
+  accessRenderEndpoint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Fetch Render Deployments
+        run: >-
+          curl --request GET \
+          --url 'https://api.render.com/v1/services/${{ secrets.RENDER_SERVICE_KEY }}/deploys?status=live&limit=20' \
+          --header 'accept: application/json' \
+          --header 'authorization: Bearer ${{ secrets.RENDER_API_KEY }}'
