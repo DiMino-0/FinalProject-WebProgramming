@@ -1,5 +1,5 @@
 import { ref } from 'vue'
-import type { ActivityEntry } from './activityEntry'
+import type { Post } from './post'
 
 export interface User {
   uid: number
@@ -7,16 +7,9 @@ export interface User {
   email: string
   password: string
   role: string
-  entries: ActivityEntry[]
+  posts: Post[]
 }
 
 export function refUser() {
-  return ref<User>({
-    uid: 0,
-    username: '',
-    email: '',
-    password: '',
-    role: 'user',
-    entries: [],
-  })
+  return ref<User>()
 }

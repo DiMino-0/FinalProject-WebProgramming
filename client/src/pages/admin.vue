@@ -1,11 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted, computed, onUnmounted } from 'vue'
-import { requireAdmin } from '@/models/auth'
-import { addUser as addUserModel, refUsers, getUserByID } from '@/models/User'
-import { refGetUserEntries } from '@/models/ActivityEntry'
 
 const canAccess = ref(false)
-const users = refUsers()
 const selectedUserId = ref<number | null>(null)
 const showAddUserModal = ref(false)
 const permissionMessage = ref('')
@@ -21,15 +17,11 @@ const newUser = ref({
 // Selected user's activities
 const selectedUserEntries = computed(() => {
   if (selectedUserId.value === null) return []
-  const entries = refGetUserEntries(selectedUserId.value)
-  const result = Array.isArray(entries) ? entries : entries.value || []
-  return result as any[] // Type assertion to ensure length property is recognized
 })
 
 // Selected user details
 const selectedUser = computed(() => {
   if (selectedUserId.value === null) return null
-  return getUserByID(selectedUserId.value)
 })
 
 // Permission check interval
@@ -37,55 +29,8 @@ let permissionCheckInterval: number | null = null
 
 // Function to verify admin permissions
 const checkAdminPermission = () => {
-  const hasAccess = requireAdmin()
-
   // If permissions changed from allowed to denied
-  if (canAccess.value && !hasAccess) {
-    permissionMessage.value = 'Your admin privileges have been revoked.'
-  }
-
-  canAccess.value = hasAccess
-}
-
-onMounted(() => {
-  canAccess.value = requireAdmin()
-
-  // Set up periodic permission checks (every .5 seconds)
-  permissionCheckInterval = window.setInterval(checkAdminPermission, 500)
-})
-
-onUnmounted(() => {
-  // Clean up interval when component is destroyed
-  if (permissionCheckInterval !== null) {
-    clearInterval(permissionCheckInterval)
-  }
-})
-
-const openAddUserModal = () => {
-  showAddUserModal.value = true
-}
-
-const addUser = () => {
-  if (newUser.value.username && newUser.value.email && newUser.value.password) {
-    addUserModel(
-      newUser.value.username,
-      newUser.value.email,
-      newUser.value.password,
-      newUser.value.role,
-    )
-    showAddUserModal.value = false
-    // Reset form
-    newUser.value = {
-      username: '',
-      email: '',
-      password: '',
-      role: 'user',
-    }
-  }
-}
-
-const viewUserActivities = (uid: number) => {
-  selectedUserId.value = uid
+  permissionMessage.value = 'Your admin privileges have been revoked.'
 }
 
 const backToUserList = () => {
@@ -100,7 +45,7 @@ const backToUserList = () => {
 
       <!-- User management section -->
       <div v-if="selectedUserId === null">
-        <button class="button is-primary" @click="openAddUserModal">
+        <button class="button is-primary" @click="">
           <span class="icon is-small"><i class="fas fa-plus"></i></span>
           <span>Add User</span>
         </button>
@@ -117,20 +62,6 @@ const backToUserList = () => {
                 <th>Actions</th>
               </tr>
             </thead>
-            <tbody>
-              <tr v-for="user in users" :key="user.uid">
-                <td>{{ user.uid }}</td>
-                <td>{{ user.username }}</td>
-                <td>{{ user.email }}</td>
-                <td>{{ user.role }}</td>
-                <td>{{ user.entries.length }}</td>
-                <td>
-                  <button class="button is-small is-info" @click="viewUserActivities(user.uid)">
-                    View Activities
-                  </button>
-                </td>
-              </tr>
-            </tbody>
           </table>
         </section>
       </div>
@@ -142,9 +73,7 @@ const backToUserList = () => {
           <span>Back to User List</span>
         </button>
 
-        <div v-if="selectedUserEntries.length === 0" class="notification is-info">
-          This user hasn't logged any activities yet.
-        </div>
+        <div class="notification is-info">This user hasn't logged any activities yet.</div>
       </div>
     </div>
 

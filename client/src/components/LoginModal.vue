@@ -21,18 +21,18 @@ const showLoginPopUp = ref(false)
         <div class="field">
           <label class="label">Email</label>
           <div class="control">
-            <input class="input" type="email" placeholder="Email" v-model="email" />
+            <input class="input" type="email" placeholder="Email" />
           </div>
         </div>
         <div class="field">
           <label class="label">Password</label>
           <div class="control">
-            <input class="input" type="password" placeholder="Password" v-model="password" />
+            <input class="input" type="password" placeholder="Password" />
           </div>
         </div>
         <div class="field">
           <div class="control">
-            <button class="button is-primary" @click="login">Login</button>
+            <button class="button is-primary">Login</button>
           </div>
         </div>
 
@@ -41,22 +41,13 @@ const showLoginPopUp = ref(false)
         <div class="field">
           <label class="label">Login as Existing User</label>
           <div class="control">
-            <div class="select is-fullwidth">
-              <select v-model="selectedUser" @change="selectUser(selectedUser)">
-                <option :value="null">Select a user</option>
-                <option v-for="user in users" :key="user.uid" :value="user">
-                  {{ user.username }} ({{ user.email }}) - {{ user.role }}
-                </option>
-              </select>
-            </div>
+            <div class="select is-fullwidth"></div>
           </div>
         </div>
 
-        <div class="field" v-if="selectedUser">
+        <div class="field">
           <div class="control">
-            <button class="button is-info is-fullwidth" @click="login">
-              Login as {{ selectedUser.username }}
-            </button>
+            <button class="button is-info is-fullwidth" @click="">Login as {{}}</button>
           </div>
         </div>
       </div>

@@ -2,18 +2,8 @@
 import { ref, computed } from 'vue'
 import LoginPopup from './LoginModal.vue'
 import RegisterPopup from './RegisterModal.vue'
-import { refGetCurrentUser, setCurrentUser } from '@/models/User'
 
 const showBurger = ref(false)
-const currentUser = refGetCurrentUser()
-
-const isLoggedIn = computed(() => {
-  return currentUser.value !== null
-})
-
-const signOut = () => {
-  setCurrentUser(null)
-}
 </script>
 
 <template>
@@ -52,11 +42,7 @@ const signOut = () => {
         </div>
 
         <div class="navbar-end">
-          <div class="navbar-item" v-if="isLoggedIn">
-            <span class="mr-2">Welcome, {{ currentUser?.username }}</span>
-            <button class="button is-light" @click="signOut">Sign Out</button>
-          </div>
-          <template v-else>
+          <template>
             <LoginPopup />
             <RegisterPopup />
           </template>
