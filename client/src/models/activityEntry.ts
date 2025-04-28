@@ -11,39 +11,6 @@ export interface ActivityEntry {
   type: string
 }
 
-const sampleEntries: ActivityEntry[] = [
-  {
-    id: 1,
-    title: 'Climbing Everest',
-    date: '2025-03-10',
-    duration: '2 hours',
-    location: 'Mount Everest',
-    picture: '/bike.png',
-    type: 'Hiking',
-  },
-  {
-    id: 2,
-    title: 'Crossing the Ocean!',
-    date: '2025-03-06',
-    duration: '1 hour',
-    location: 'Pacific Ocean',
-    picture: '/bike.png',
-    type: 'Swimming',
-  },
-  {
-    id: 3,
-    title: 'Running in the park -_-',
-    date: '2021-10-12',
-    duration: '1 hour',
-    location: 'Central Park',
-    picture: '/bike.png',
-    type: 'Running',
-  },
-]
-
-// Maintain a counter for unique IDs across all entries
-const nextEntryId = ref(4) // Start after the sample entries
-
 // Get entries for the currently logged in user
 export function refGetCurrentUserEntries() {
   const currentUser = refGetCurrentUser()
@@ -69,21 +36,6 @@ export function refGetUserEntries(uid: number) {
   })
 }
 
-// Add entry to current user's entries
-export function addEntry(entry: Omit<ActivityEntry, 'id'>) {
-  const currentUser = refGetCurrentUser()
-  if (currentUser.value) {
-    const newEntry = {
-      ...entry,
-      id: nextEntryId.value,
-    }
-    nextEntryId.value++
-    currentUser.value.entries.push(newEntry)
-    return newEntry
-  }
-  return null
-}
-
 // Delete entry from current user's entries
 export function deleteEntry(id: number) {
   const currentUser = refGetCurrentUser()
@@ -95,14 +47,6 @@ export function deleteEntry(id: number) {
     }
   }
   return false
-}
-
-// Initialize a new user with sample entries
-export function initializeUserEntries(userId: number) {
-  const user = getUserByID(userId)
-  if (user && user.entries.length === 0) {
-    user.entries = JSON.parse(JSON.stringify(sampleEntries))
-  }
 }
 
 // Get entries for all users except current user
