@@ -1,54 +1,9 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { refGetCurrentUser, refUsers, setCurrentUser, type User } from '@/models/User'
-import { initializeUserEntries } from '@/models/ActivityEntry'
-
-const users = refUsers()
 
 const showLoginPopUp = ref(false)
-const email = ref('')
-const password = ref('')
-const selectedUser = refGetCurrentUser()
-
-const selectUser = (user: User | null) => {
-  if (user) {
-    email.value = user.email
-    password.value = user.password
-    selectedUser.value = user
-  }
-}
-
-const login = () => {
-  if (selectedUser.value) {
-    // Set the current user in the system
-    setCurrentUser(selectedUser.value)
-    /**
-     * !REMOVE: Temporary code to initialize sample entries for the user
-     */
-    initializeUserEntries(selectedUser.value.uid)
-    console.log('Logged in as:', selectedUser.value.username)
-  } else {
-    // Find user by email/password
-    const user = users.value.find((u) => u.email === email.value && u.password === password.value)
-    if (user) {
-      setCurrentUser(user)
-      /**
-       * !REMOVE: Temporary code to initialize sample entries for the user
-       */
-      initializeUserEntries(user.uid)
-      console.log('Logged in as:', user.username)
-    } else {
-      console.log('Invalid credentials')
-      /**
-       * TODO: Show Error Message notification to user
-       */
-    }
-  }
-  showLoginPopUp.value = false
-}
 </script>
 
-<!-- TODO: When  form submitted w/ login button, check for the user and log them in -->
 <template>
   <div class="navbar-item">
     <div
