@@ -8,4 +8,5 @@ export interface Post {
   duration: string
   location?: string
   image_url?: string
+  created_on: string
 }

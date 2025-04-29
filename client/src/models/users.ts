@@ -1,5 +1,6 @@
 import type { DataListEnvelope } from './dataEnvelope'
 import { api } from './session'
+import type { Post } from './post'
 
 export interface User {
   id: number
@@ -9,6 +10,7 @@ export interface User {
   birth_date?: string
   gender?: string
   pfp_image_url?: string
+  posts?: Post[]
 }
 
 export function getAll(): Promise<DataListEnvelope<User>> {
