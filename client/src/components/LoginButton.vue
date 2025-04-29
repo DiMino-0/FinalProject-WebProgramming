@@ -4,7 +4,6 @@ import { ref } from 'vue'
 import { getAll, type User } from '../models/users'
 
 const users = ref<User[]>([])
-const showLoginPopUp = ref(false)
 const session = refSession()
 
 getAll().then((response) => {

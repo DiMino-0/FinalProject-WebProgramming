@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref } from 'vue'
 import LoginButton from './LoginButton.vue'
-import RegisterPopup from './RegisterModal.vue'
+import RegisterPopup from './RegisterButton.vue'
 
 const showBurger = ref(false)
 </script>
@@ -46,10 +46,10 @@ const showBurger = ref(false)
         </div>
 
         <div class="navbar-end">
-          <div class="navbar-item">
+          <div class="navbar-item login-container">
             <LoginButton />
           </div>
-          <div class="navbar-item">
+          <div class="navbar-item register-container">
             <RegisterPopup />
           </div>
         </div>
@@ -65,5 +65,24 @@ const showBurger = ref(false)
 }
 .navbar {
   background-color: #32ae9b;
+}
+
+/* Isolate login and register components from Bulma's cascade */
+.login-container,
+.register-container {
+  isolation: isolate;
+}
+
+/* Override Bulma's default behavior for has-dropdown inside is-active */
+
+:deep(.navbar-dropdown) {
+  display: none;
+}
+
+:deep(.has-dropdown.is-hoverable:hover .navbar-dropdown) {
+  display: block;
+  left: 0;
+  top: 100%;
+  margin-top: -0.4rem;
 }
 </style>
