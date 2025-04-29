@@ -20,7 +20,6 @@ async function getAll(limit = 30, offset = 0, sort = "id", order = "desc") {
   }
   return {
     users: list.data,
-    total: list.count,
   };
 }
 

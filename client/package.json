@@ -13,8 +13,9 @@
     "format": "prettier --write src/"
   },
   "dependencies": {
-    "bulma": "^1.0.3",
     "@fortawesome/fontawesome-free": "^5.15.4",
+    "bulma": "^1.0.3",
+    "final-project": "file:..",
     "vue": "^3.5.13",
     "vue-router": "^4.5.0"
   },
