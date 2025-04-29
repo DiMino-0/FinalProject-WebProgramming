@@ -1,23 +1,29 @@
-@rootUrl = http://localhost:3000/
+@rootUrl = http://localhost:8000/api/v1/
 
 ### GET
-GET {{rootUrl}}api/v1/dummy/
+GET {{rootUrl}}users
 
 ### POST
-POST {{rootUrl}}api/v1/dummy/
+POST {{rootUrl}}users
 Content-Type: application/json
 
 {
-  "blurb": "blurb test"
+  "id": 1,
+  "username": "Sir.Testsalot",
+  "email": "tests@yoohoo.net",
+  "role": "user",
+  "birth_date": "01/01/2000",
+  "gender": "male",
+  "pfp_image_url": "https://picsum.photos/id/11/200/300"
 }
 
 ### PATCH
-PATCH {{rootUrl}}api/v1/dummy/3
+PATCH {{rootUrl}}users/1
 Content-Type: application/json
 
 {
-  "blurb": "blurb testing"
+  "username": "Sir.Testedalot"
 }
 
 ### DELETE
-DELETE {{rootUrl}}api/v1/dummy/1
+DELETE {{rootUrl}}users/1
