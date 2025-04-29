@@ -1,5 +1,3 @@
-import { ref } from 'vue'
-
 export interface Post {
   id: number
   user_id: number

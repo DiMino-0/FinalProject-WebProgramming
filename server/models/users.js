@@ -4,9 +4,7 @@ const { connect } = require("./supabase");
 const TABLE_NAME = "users";
 
 const BaseQuery = () =>
-  connect().from(TABLE_NAME).select("*, posts(*), comments(*)", {
-    count: "estimated",
-  });
+  connect().from(TABLE_NAME).select("*, posts(*), comments(*)");
 
 //likely not how it should stay
 const isAdmin = true;
@@ -19,7 +17,8 @@ async function getAll(limit = 30, offset = 0, sort = "id", order = "desc") {
     throw list.error;
   }
   return {
-    users: list.data,
+    items: list.data,
+    total: list.count,
   };
 }
 

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import LoginPopup from './LoginModal.vue'
+import LoginButton from './LoginButton.vue'
 import RegisterPopup from './RegisterModal.vue'
 
 const showBurger = ref(false)
@@ -34,7 +34,7 @@ const showBurger = ref(false)
         <div class="navbar-start">
           <RouterLink to="/" class="navbar-item">Home</RouterLink>
 
-          <RouterLink to="/activity" class="navbar-item">Activity</RouterLink>
+          <RouterLink to="/posts" class="navbar-item">Posts</RouterLink>
 
           <RouterLink to="/friends" class="navbar-item">Friends' Activity</RouterLink>
 
@@ -46,12 +46,12 @@ const showBurger = ref(false)
         </div>
 
         <div class="navbar-end">
-          <template>
-            <LoginPopup />
+          <div class="navbar-item">
+            <LoginButton />
+          </div>
+          <div class="navbar-item">
             <RegisterPopup />
-          </template>
-
-          <div class="navbar-item"></div>
+          </div>
         </div>
       </div>
     </div>

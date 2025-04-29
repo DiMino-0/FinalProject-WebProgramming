@@ -1,6 +1,5 @@
 require("dotenv").config();
 const express = require("express");
-const { statusCodes } = require("./models/errors");
 const usersController = require("./controllers/users");
 
 const PORT = process.env.PORT ?? 8000;
