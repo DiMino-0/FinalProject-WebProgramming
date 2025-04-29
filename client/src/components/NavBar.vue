@@ -10,6 +10,10 @@ const showBurger = ref(false)
   <nav class="navbar is-success" role="navigation" aria-label="main navigation">
     <div class="container">
       <div class="navbar-brand">
+        <a class="navbar-item" href="">
+          <img alt="Logo Ipsum logo" class="logo" src="@/assets/logoipsum.svg" width="30" />
+        </a>
+
         <a
           role="button"
           class="navbar-burger"
@@ -46,6 +50,8 @@ const showBurger = ref(false)
             <LoginPopup />
             <RegisterPopup />
           </template>
+
+          <div class="navbar-item"></div>
         </div>
       </div>
     </div>

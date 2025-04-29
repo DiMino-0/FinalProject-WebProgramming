@@ -1,7 +1,7 @@
 const express = require("express");
 require("dotenv").config();
 const { statusCodes } = require("./models/errors");
-const dummyController = require("./controllers/DummyTable");
+// const dummyController = require("./controllers/DummyTable");
 
 const PORT = process.env.PORT ?? 8000;
 
@@ -9,7 +9,7 @@ const app = express();
 
 // Middleware
 app.use(express.json());
-app.use("/api/v1/dummy", dummyController).use("/", express.static("dist"));
+// app.use("/api/v1/dummy", dummyController).use("/", express.static("dist"));
 
 //error handling middleware
 app.use((err, req, res, next) => {

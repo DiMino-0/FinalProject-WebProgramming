@@ -2,10 +2,12 @@ import { ref } from 'vue'
 
 export interface Post {
   id: number
+  user_id: number
+  post_message: string
   title: string
   date: string
+  type_of_activity: string
   duration: string
   location?: string
-  picture?: string
-  type: string
+  image_url?: string
 }
