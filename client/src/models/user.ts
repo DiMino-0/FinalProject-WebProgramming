@@ -1,15 +1,20 @@
-import { ref } from 'vue'
-import type { Post } from './post'
+import type { DataListEnvelope } from './dataEnvelope'
+import { api } from './session'
 
 export interface User {
-  uid: number
+  id: number
   username: string
   email: string
-  password: string
   role: string
-  posts: Post[]
+  birth_date?: string
+  gender?: string
+  pfp_image_url?: string
 }
 
-export function refUser() {
-  return ref<User>()
+export function getAll(): Promise<DataListEnvelope<User>> {
+  return api('users')
+}
+
+export function get(id: number): Promise<User> {
+  return api(`users/${id}`)
 }
