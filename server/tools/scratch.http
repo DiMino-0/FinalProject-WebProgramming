@@ -8,7 +8,6 @@ POST {{rootUrl}}users
 Content-Type: application/json
 
 {
-  "id": 1,
   "username": "Sir.Testsalot",
   "email": "tests@yoohoo.net",
   "role": "user",

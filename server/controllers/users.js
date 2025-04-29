@@ -65,4 +65,8 @@ router
       .catch(next);
   });
 
+function num(value) {
+  return value ? +value : undefined;
+}
+
 module.exports = router;
