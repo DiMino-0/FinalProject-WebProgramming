@@ -12,6 +12,16 @@ export const activityTypes: ActivityType[] = [
   { id: 'weightlifting', label: 'Weightlifting', color: 'is-danger' },
   { id: 'hiking', label: 'Hiking', color: 'is-warning' },
   { id: 'walking', label: 'Walking', color: 'is-light' },
+  { id: 'basketball', label: 'Basketball', color: 'is-primary is-light' },
+  { id: 'meditation', label: 'Meditation', color: 'is-info is-light' },
+  { id: 'weight training', label: 'Weight Training', color: 'is-danger is-light' },
+  { id: 'crossfit', label: 'Crossfit', color: 'is-success is-light' },
+  { id: 'rock climbing', label: 'Rock Climbing', color: 'is-warning is-light' },
+  { id: 'tennis', label: 'Tennis', color: 'is-link is-light' },
+  { id: 'dancing', label: 'Dancing', color: 'is-primary is-light' },
+  { id: 'kayaking', label: 'Kayaking', color: 'is-info is-light' },
+  { id: 'martial arts', label: 'Martial Arts', color: 'is-danger is-light' },
+  { id: 'pilates', label: 'Pilates', color: 'is-success is-light' },
   { id: 'other', label: 'Other', color: 'is-dark' },
 ]
 
