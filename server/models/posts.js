@@ -32,6 +32,32 @@ async function get(id) {
   return item[0];
 }
 
+async function getByUserId(
+  userId,
+  limit = 30,
+  offset = 0,
+  sort = "id",
+  order = "desc"
+) {
+  const {
+    data: items,
+    error,
+    count,
+  } = await connect()
+    .from(TABLE_NAME)
+    .select("*")
+    .eq("user_id", userId)
+    .order(sort, { ascending: order === "asc" })
+    .range(offset, offset + limit - 1);
+  if (error) {
+    throw error;
+  }
+  return {
+    items,
+    total: count,
+  };
+}
+
 async function search(
   query,
   limit = 30,
@@ -93,6 +119,7 @@ async function remove(id) {
 module.exports = {
   getAll,
   get,
+  getByUserId,
   search,
   create,
   update,

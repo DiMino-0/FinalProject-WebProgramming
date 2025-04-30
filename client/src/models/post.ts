@@ -18,3 +18,6 @@ export interface Post {
 export function getAll(): Promise<DataListEnvelope<Post>> {
   return api(`posts`)
 }
+export function getAllByUserId(id: number): Promise<DataListEnvelope<Post>> {
+  return api(`posts/user/${id}`)
+}

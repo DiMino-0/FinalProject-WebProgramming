@@ -11,7 +11,7 @@ const session = refSession()
 const posts = ref(<Post[]>[])
 const comments = ref(<Comment[]>[])
 const isLoading = ref(false)
-const allUsers = ref<any[]>([]) // Store all users for reference
+const users = ref<any[]>([]) // Store all users for reference
 
 // Helper function to get comments for a specific post
 const getCommentsForPost = (postId: number) => {
@@ -19,55 +19,28 @@ const getCommentsForPost = (postId: number) => {
   return comments.value.filter((comment) => Number(comment.post_id) === Number(postId))
 }
 
-// Find user by ID from all users
+// Find user by ID from list of all users
 const findUserById = (userId: number) => {
   if (session.value.user?.id === userId) return session.value.user
-  return (
-    allUsers.value.find((user) => user.id === userId) || {
-      username: 'Unknown User',
-      pfp_image_url: '',
-    }
-  )
+  return users.value.find((user) => user.id === userId)
 }
 
 //watchEffect to react to session changes
 watchEffect(() => {
   if (session.value.user?.id !== undefined) {
     isLoading.value = true
-
-    // Create promises for both fetches
-    const userPromise = get(session.value.user.id)
-    const allUsersPromise = getAll()
-
-    // Execute both promises in parallel
-    Promise.all([userPromise, allUsersPromise])
-      .then(([userResponse, allUsersResponse]) => {
-        posts.value = userResponse.posts ?? []
-        allUsers.value = allUsersResponse.items // Store all users
-
-        const allComments: Comment[] = []
-
-        // Add comments from current user
-        if (userResponse.comments && userResponse.comments.length > 0) {
-          allComments.push(...userResponse.comments)
-        }
-
-        // Add comments from all other users
-        allUsersResponse.items.forEach((user) => {
-          if (user.id !== session.value.user?.id && user.comments && user.comments.length > 0) {
-            allComments.push(...user.comments)
-          }
-        })
-
-        // Set all gathered comments
-        comments.value = allComments
+    getAll()
+      .then((response) => {
+        users.value = response.items
+        posts.value = response.items.flatMap((user) => user.posts ?? [])
+        comments.value = response.items.flatMap((user) => user.comments ?? [])
       })
-      .catch((error) => {
-        console.error('Failed to fetch posts or comments:', error)
-      })
-      .finally(() => {
+      .then(() => {
         isLoading.value = false
       })
+  } else {
+    posts.value = []
+    comments.value = []
   }
 })
 

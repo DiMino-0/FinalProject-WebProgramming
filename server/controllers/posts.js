@@ -23,6 +23,17 @@ router
       })
       .catch(next);
   })
+  .get("/user/:id", (req, res, next) => {
+    const { id } = req.params;
+    const { limit, offset, sort, order } = req.query;
+
+    model
+      .getByUserId(id, num(limit), num(offset), sort, order)
+      .then((data) => {
+        res.send(data);
+      })
+      .catch(next);
+  })
   .post("/", (req, res, next) => {
     const newValues = req.body;
 
