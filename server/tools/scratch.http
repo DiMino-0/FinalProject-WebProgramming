@@ -3,6 +3,8 @@
 ### GET
 GET {{rootUrl}}users
 
+### GET
+GET {{rootUrl}}posts
 ### POST
 POST {{rootUrl}}users
 Content-Type: application/json
@@ -14,15 +16,15 @@ Content-Type: application/json
   "role": "user",
   "birth_date": "01/01/2000",
   "gender": "male",
-  "pfp_image_url": "https://picsum.photos/id/11/200/300"
+  "pfp_image_url": "https://picsum.photos/id/11/200/200"
 }
 
 ### PATCH
-PATCH {{rootUrl}}users/1
+PATCH {{rootUrl}}users/4
 Content-Type: application/json
 
 {
-  "username": "Sir.Testedalot"
+  "pfp_image_url": "https://picsum.photos/id/11/200/200"
 }
 
 ### DELETE

@@ -1,6 +1,7 @@
 import type { DataListEnvelope } from './dataEnvelope'
-import { api } from './session'
 import type { Post } from './post'
+import type { Comment } from './comment'
+import { api } from './session'
 
 export interface User {
   id: number
@@ -11,6 +12,7 @@ export interface User {
   gender?: string
   pfp_image_url?: string
   posts?: Post[]
+  comments?: Comment[]
 }
 
 export function getAll(): Promise<DataListEnvelope<User>> {

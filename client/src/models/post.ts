@@ -1,3 +1,6 @@
+import type { DataListEnvelope } from './dataEnvelope'
+import { api } from './session'
+
 export interface Post {
   id: number
   user_id: number
@@ -9,4 +12,9 @@ export interface Post {
   location?: string
   image_url?: string
   created_on: string
+  comments?: Comment[]
+}
+
+export function getAll(): Promise<DataListEnvelope<Post>> {
+  return api(`posts`)
 }

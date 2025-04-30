@@ -1,6 +1,8 @@
 require("dotenv").config();
 const express = require("express");
+
 const usersController = require("./controllers/users");
+// const postsController = require("./controllers/posts");
 
 const PORT = process.env.PORT ?? 8000;
 
@@ -23,7 +25,10 @@ app.use((req, res, next) => {
 app.use(express.json());
 
 //controllers
-app.use("/api/v1/users", usersController).use("/", express.static("dist"));
+app
+  .use("/api/v1/users", usersController)
+  // .use("/api/v1/posts", postsController)
+  .use("/", express.static("dist"));
 
 //error handling middleware
 app.use((err, req, res, next) => {
