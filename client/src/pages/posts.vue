@@ -2,16 +2,32 @@
 import type { Post } from '@/models/post'
 import { isLoggedIn, refSession } from '@/models/session'
 import { get } from '@/models/users'
-import { ref } from 'vue'
+import dayjs from 'dayjs'
+import relativeTime from 'dayjs/plugin/relativeTime'
+import { ref, watchEffect } from 'vue'
 
 const session = refSession()
-
 const posts = ref(<Post[]>[])
-if (session.value.user?.id !== undefined) {
-  get(session.value.user.id).then((response) => {
-    posts.value = response.posts ?? []
-  })
-}
+const isLoading = ref(false)
+
+// Use watchEffect to react to session changes
+watchEffect(() => {
+  if (session.value.user?.id !== undefined) {
+    isLoading.value = true
+    get(session.value.user.id)
+      .then((response) => {
+        posts.value = response.posts ?? []
+      })
+      .catch((error) => {
+        console.error('Failed to fetch posts:', error)
+      })
+      .finally(() => {
+        isLoading.value = false
+      })
+  }
+})
+
+dayjs.extend(relativeTime)
 </script>
 
 <template>
@@ -30,12 +46,15 @@ if (session.value.user?.id !== undefined) {
           Please log in to view and manage your posts.
         </div>
         <div class="container" v-else>
-          <div v-if="posts.length === 0" class="no-posts-message">
+          <div v-if="isLoading" class="is-flex is-justify-content-center p-5">
+            <span class="is-size-4">Loading posts...</span>
+          </div>
+          <div v-else-if="posts.length === 0" class="no-posts-message">
             <p class="is-size-4">You haven't created any posts yet.</p>
             <p class="is-size-6">When you create posts, they will appear here.</p>
           </div>
           <template v-else>
-            <div v-for="(post, index) in posts" :key="post.id" class="column is-one-third">
+            <div v-for="post in posts" :key="post.id" class="column is-one-third">
               <div class="card post">
                 <div class="card-content">
                   <h2 class="title is-4 has-text-white">{{ post.title }}</h2>
@@ -43,7 +62,7 @@ if (session.value.user?.id !== undefined) {
                     {{ post.post_message }}
                   </p>
                   <p class="subtitle is-6 has-text-white">
-                    <strong>Created at:</strong> {{ post.created_on }}
+                    <strong>Created at:</strong> {{ dayjs(post.created_on).fromNow() }}
                   </p>
                   <p class="subtitle is-6 has-text-white">
                     <strong>Author:</strong> {{ session.user?.username }}
