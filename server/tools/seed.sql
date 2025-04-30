@@ -1,18 +1,80 @@
-INSERT INTO public.users (id, username, email, role, birth_date, gender, pfp_image_url) VALUES
-(1, 'john_doe', 'john.doe@example.com', 'user', '11/01/2000', 'male', 'https://picsum.photos/id/10/200/200'),
-(2, 'jane_smith', 'jane.smith@example.com', 'user', '06/09/2004', 'female', 'https://picsum.photos/id/9/200/200'),
-(3, 'alice_jones', 'alice.jones@example.com', 'user', '05/11/1998', 'female', 'https://picsum.photos/id/8/200/200'),
-(6, 'dow_jones', 'dow.jones@example.com', 'user', '05/26/1896', 'non-binary', 'https://picsum.photos/id/11/200/200');
+INSERT INTO public.users (id, username, email, role, birth_date, gender, pfp_image_url, phone_number, password) VALUES
+(1, 'john_doe', 'john.doe@example.com', 'user', '2000-11-01', 'male', 'https://picsum.photos/id/10/200/200', '123-456-7899', 'password123'),
+(2, 'jane_smith', 'jane.smith@example.com', 'user', '2004-06-09', 'female', 'https://picsum.photos/id/9/200/200', 'janepass', NULL),
+(3, 'alice_jones', 'alice.jones@example.com', 'user', '1998-05-11', 'female', 'https://picsum.photos/id/8/200/200', 'alicepass', NULL),
+(6, 'dow_jones', 'dow.jones@example.com', 'user', '1896-05-26', 'non-binary', 'https://picsum.photos/id/11/200/200', 'dowpass', NULL),
+(7, 'mike_brown', 'mike.brown@example.com', 'user', '1995-03-15', 'male', 'https://picsum.photos/id/12/200/200', '555-123-4567', 'password123'),
+(8, 'sarah_parker', 'sarah.parker@example.com', 'user', '1990-07-22', 'female', 'https://picsum.photos/id/13/200/200', '555-234-5678', 'user_pass'),
+(9, 'alex_rodriguez', 'alex.rodriguez@example.com', 'user', '1988-12-30', 'male', 'https://picsum.photos/id/14/200/200', '555-345-6789', 'userpass'),
+(10, 'emma_wilson', 'emma.wilson@example.com', 'user', '2001-09-18', 'female', 'https://picsum.photos/id/15/200/200', '555-456-7890', 'emmapass'),
+(11, 'robert_green', 'robert.green@example.com', 'user', '1992-04-12', 'male', 'https://picsum.photos/id/21/200/200', '555-567-8901', 'robpass'),
+(12, 'lisa_thomas', 'lisa.thomas@example.com', 'user', '1987-08-30', 'female', 'https://picsum.photos/id/22/200/200', '555-678-9012', 'lisapass'),
+(13, 'chris_martin', 'chris.martin@example.com', 'moderator', '1994-02-17', 'male', 'https://picsum.photos/id/23/200/200', '555-789-0123', 'modpass123'),
+(14, 'olivia_clark', 'olivia.clark@example.com', 'user', '2002-11-05', 'female', 'https://picsum.photos/id/24/200/200', '555-890-1234', 'oliviapass'),
+(15, 'sam_white', 'sam.white@example.com', 'user', '1999-07-19', 'non-binary', 'https://picsum.photos/id/25/200/200', '555-901-2345', 'sampass'),
+(16, 'myAdminTester', 'admin@example.com', 'admin', '1990-01-01', 'male', 'https://picsum.photos/id/1/200/200', '555-012-3456', 'adminpass');
+
 INSERT INTO public.posts (id, user_id, image_url, type_of_activity, duration, location, post_message, title, date) VALUES
 (1, 1, 'https://picsum.photos/id/7/200/200', 'Running', '30 minutes', 'Central Park', 'Had a great run today!', 'Morning Run', '2023-10-01'),
 (2, 2, 'https://picsum.photos/id/6/200/200', 'Cycling', '1 hour', 'River Trail', 'Enjoyed a beautiful ride!', 'Evening Cycle', '2023-10-02'),
-(3, 3, 'https://picsum.photos/id/5/200/200', 'Yoga', '1 hour', 'Home', 'Feeling relaxed after yoga.', 'Yoga Session', '11/01/2000');
+(3, 3, 'https://picsum.photos/id/5/200/200', 'Yoga', '1 hour', 'Home', 'Feeling relaxed after yoga.', 'Yoga Session', '11/01/2000'),
+(4, 7, 'https://picsum.photos/id/16/200/200', 'Swimming', '45 minutes', 'Community Pool', 'Great workout in the water!', 'Swim Training', '2023-10-05'),
+(5, 8, 'https://picsum.photos/id/17/200/200', 'Hiking', '3 hours', 'Mountain Trail', 'Amazing views from the summit!', 'Weekend Hike', '2023-10-07'),
+(6, 9, 'https://picsum.photos/id/18/200/200', 'Basketball', '2 hours', 'Local Court', 'Played a great game with friends', 'Basketball Match', '2023-10-08'),
+(7, 10, 'https://picsum.photos/id/19/200/200', 'Meditation', '20 minutes', 'Beach', 'Found my center today', 'Sunset Meditation', '2023-10-09'),
+(8, 1, 'https://picsum.photos/id/20/200/200', 'Weight Training', '1 hour', 'Gym', 'New personal record today!', 'Strength Training', '2023-10-10'),
+(9, 6, 'https://picsum.photos/id/26/200/200', 'Crossfit', '45 minutes', 'Fitness Studio', 'Toughest workout yet but feeling great!', 'Crossfit Challenge', '2023-10-12'),
+(10, 8, 'https://picsum.photos/id/27/200/200', 'Rock Climbing', '2 hours', 'Indoor Climbing Gym', 'Finally reached the top!', 'Climbing Victory', '2023-10-14'),
+(11, 11, 'https://picsum.photos/id/28/200/200', 'Tennis', '1.5 hours', 'City Courts', 'Great match with friends today', 'Tennis Tournament', '2023-10-15'),
+(12, 12, 'https://picsum.photos/id/29/200/200', 'Dancing', '1 hour', 'Dance Studio', 'Learning new moves every week', 'Salsa Class', '2023-10-16'),
+(13, 13, 'https://picsum.photos/id/30/200/200', 'Kayaking', '3 hours', 'Lake Shore', 'Beautiful day on the water', 'Kayak Adventure', '2023-10-17'),
+(14, 14, 'https://picsum.photos/id/31/200/200', 'Martial Arts', '1 hour', 'Dojo', 'Earned my new belt today!', 'Karate Progress', '2023-10-18'),
+(15, 15, 'https://picsum.photos/id/32/200/200', 'Pilates', '45 minutes', 'Wellness Center', 'Core strength improving every session', 'Pilates Practice', '2023-10-19');
+
 INSERT INTO public.comments (comment_message, user_id, post_id) VALUES
 ('Great post!', 1, 1),
 ('Thanks for sharing!', 2, 1),
 ('I love yoga too!', 3, 3),
-('Wow!', 6, 2);
+('Wow!', 6, 2),
+('Impressive progress!', 7, 8),
+('Which trail did you take?', 9, 5),
+('I need to try that meditation spot', 2, 7),
+('Basketball is my favorite sport too', 3, 6),
+('How was the water temperature?', 8, 4),
+('Would love to join next time!', 10, 5),
+('What exercises did you do?', 7, 8),
+('Beautiful photo!', 9, 7),
+('I need to try crossfit sometime', 1, 9),
+('Is this gym good for beginners?', 10, 10),
+('Can I join your tennis group?', 3, 11),
+('Salsa is my favorite dance!', 7, 12),
+('What lake is this? Looks gorgeous!', 9, 13),
+('Congrats on the new belt!', 11, 14),
+('Pilates changed my life too', 12, 15),
+('How often do you practice?', 13, 7),
+('Looking strong!', 14, 8),
+('Beautiful scenery!', 15, 5),
+('How difficult was that climb?', 2, 10),
+('Any tips for beginners?', 6, 11);
+
 INSERT INTO public.friendships (id, user_initiated_id, user_accepted_id) VALUES
 (1, 1, 2),
 (2, 2, 3),
-(3, 3, 1);
+(3, 3, 1),
+(4, 7, 1),
+(5, 8, 2),
+(6, 9, 3),
+(7, 10, 7),
+(8, 1, 9),
+(9, 2, 10),
+(10, 3, 8),
+(11, 11, 12),
+(12, 13, 14),
+(13, 15, 6),
+(14, 7, 11),
+(15, 9, 13),
+(16, 10, 15),
+(17, 14, 8),
+(18, 12, 9),
+(19, 11, 10),
+(20, 15, 1);

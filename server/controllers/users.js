@@ -47,10 +47,19 @@ router
   .delete("/:id", (req, res, next) => {
     const { id } = req.params;
 
+    let deletedUser;
+
+    // First get the user data
     model
-      .remove(id)
-      .then((data) => {
-        res.send(data);
+      .get(id)
+      .then((user) => {
+        deletedUser = user; // Store the user data
+        // Then delete the user
+        return model.remove(id);
+      })
+      .then(() => {
+        // Return the previously fetched user data
+        res.send(deletedUser);
       })
       .catch(next);
   })

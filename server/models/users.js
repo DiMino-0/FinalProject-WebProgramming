@@ -6,9 +6,6 @@ const TABLE_NAME = "users";
 const BaseQuery = () =>
   connect().from(TABLE_NAME).select("*, posts(*), comments(*)");
 
-//likely not how it should stay
-const isAdmin = true;
-
 async function getAll(limit = 30, offset = 0, sort = "id", order = "desc") {
   const list = await BaseQuery()
     .order(sort, { ascending: order === "asc" })
@@ -61,12 +58,6 @@ async function search(
 }
 
 async function create(item) {
-  if (!isAdmin) {
-    throw CustomError(
-      "Sorry, you are not authorized to create a new item",
-      statusCodes.UNAUTHORIZED
-    );
-  }
   const { data: newItem, error } = await connect()
     .from(TABLE_NAME)
     .insert(item)
@@ -78,12 +69,6 @@ async function create(item) {
 }
 
 async function update(id, item) {
-  if (!isAdmin) {
-    throw CustomError(
-      "Sorry, you are not authorized to update this item",
-      statusCodes.UNAUTHORIZED
-    );
-  }
   const { data: updatedItem, error } = await connect()
     .from(TABLE_NAME)
     .update(item)
@@ -96,12 +81,6 @@ async function update(id, item) {
 }
 
 async function remove(id) {
-  if (!isAdmin) {
-    throw CustomError(
-      "Sorry, you are not authorized to delete this item",
-      statusCodes.UNAUTHORIZED
-    );
-  }
   const { data: deletedItem, error } = await connect()
     .from(TABLE_NAME)
     .delete()

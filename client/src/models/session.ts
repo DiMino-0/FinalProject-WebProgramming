@@ -6,6 +6,10 @@ export function api<T>(action: string): Promise<T> {
   return myFetch.api<T>(action)
 }
 
+export function apiDelete<T>(action: string): Promise<T> {
+  return myFetch.apiDelete<T>(action)
+}
+
 const session = ref({
   user: null as User | null,
   token: null as string | null,

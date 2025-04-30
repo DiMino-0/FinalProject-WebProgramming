@@ -32,7 +32,12 @@ watchEffect(() => {
     getAll()
       .then((response) => {
         users.value = response.items
-        posts.value = response.items.flatMap((user) => user.posts ?? [])
+
+        // Filter to only include posts from the current user
+        const currentUserPosts =
+          response.items.find((user) => user.id === session.value.user?.id)?.posts ?? []
+        posts.value = currentUserPosts
+
         comments.value = response.items.flatMap((user) => user.comments ?? [])
       })
       .then(() => {

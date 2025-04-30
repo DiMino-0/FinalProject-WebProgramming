@@ -1,7 +1,7 @@
 import type { DataListEnvelope } from './dataEnvelope'
 import type { Post } from './post'
 import type { Comment } from './comment'
-import { api } from './session'
+import { api, apiDelete } from './session'
 
 export interface User {
   id: number
@@ -21,4 +21,8 @@ export function getAll(): Promise<DataListEnvelope<User>> {
 
 export function get(id: number): Promise<User> {
   return api(`users/${id}`)
+}
+
+export function deleteUser(id: number): Promise<User> {
+  return apiDelete(`users/${id}`)
 }
