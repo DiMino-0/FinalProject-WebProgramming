@@ -9,7 +9,7 @@ function formatDate(dateString: string) {
   })
 }
 </script>
-
+<!-- TODO: display entries where user_initiated_id === session.user, should be able to remove friends from here-->
 <template>
   <main>
     <section class="friends body-container">

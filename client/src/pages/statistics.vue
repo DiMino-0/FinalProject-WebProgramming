@@ -128,7 +128,7 @@ function getColorForActivityType(type: string): string {
   return activityType?.color || 'is-light'
 }
 </script>
-
+<!-- TODO: Beautification needed, perhaps Buefy-ication lol (consult bulma first)-->
 <template>
   <main>
     <section class="statistics body-container">

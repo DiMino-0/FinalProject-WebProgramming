@@ -60,6 +60,8 @@ const loadAllUsers = async () => {
 loadAllUsers()
 </script>
 
+<!-- TODO: Users should be able to request to add a friend from here -->
+<!-- Additionally, i need to implement a system for handling friend requests -->
 <template>
   <main>
     <section class="search body-container">

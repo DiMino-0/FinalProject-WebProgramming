@@ -10,6 +10,7 @@ getAll().then((response) => {
   users.value = response.items
 })
 </script>
+<!-- TODO: Show fields to login checking db for the user, NEED AUTH -->
 
 <template>
   <div class="buttons" v-if="!isLoggedIn()">

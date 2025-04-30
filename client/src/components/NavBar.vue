@@ -74,7 +74,6 @@ const showBurger = ref(false)
 }
 
 /* Override Bulma's default behavior for has-dropdown inside is-active */
-
 :deep(.navbar-dropdown) {
   display: none;
 }

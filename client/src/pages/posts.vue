@@ -73,7 +73,7 @@ watchEffect(() => {
 
 dayjs.extend(relativeTime)
 </script>
-
+<!-- TODO: Users should be able to modify any/all posts/comments that they have made, AND create new ones from this screen -->
 <template>
   <main>
     <section class="body-container">
