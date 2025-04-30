@@ -46,12 +46,8 @@ const showBurger = ref(false)
         </div>
 
         <div class="navbar-end">
-          <div class="navbar-item login-container">
-            <LoginButton />
-          </div>
-          <div class="navbar-item register-container">
-            <RegisterPopup />
-          </div>
+          <LoginButton class="navbar-item" />
+          <RegisterPopup class="navbar-item" />
         </div>
       </div>
     </div>
@@ -67,9 +63,15 @@ const showBurger = ref(false)
   background-color: #32ae9b;
 }
 
+/* Move the navbar-end buttons down */
+.navbar-end {
+  padding-top: 1rem;
+  margin-bottom: -1rem;
+}
+
 /* Isolate login and register components from Bulma's cascade */
-.login-container,
-.register-container {
+:deep(.navbar-item.login-button),
+:deep(.navbar-item.register-button) {
   isolation: isolate;
 }
 

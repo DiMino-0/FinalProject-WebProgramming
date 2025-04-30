@@ -10,6 +10,10 @@ export function apiDelete<T>(action: string): Promise<T> {
   return myFetch.apiDelete<T>(action)
 }
 
+export function apiCustomMethod<T>(action: string, method: string, body: any): Promise<T> {
+  return myFetch.apiCustomMethod<T>(action, method, body)
+}
+
 const session = ref({
   user: null as User | null,
   token: null as string | null,

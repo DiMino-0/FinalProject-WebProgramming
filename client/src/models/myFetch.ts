@@ -12,3 +12,12 @@ export function apiDelete<T>(action: string): Promise<T> {
     method: 'DELETE',
   }).then((x) => x.json())
 }
+export function apiCustomMethod<T>(action: string, method: string, body: any): Promise<T> {
+  return fetch(`${API_ROOT}${action}`, {
+    method: method,
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(body),
+  }).then((x) => x.json())
+}
