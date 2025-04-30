@@ -66,6 +66,7 @@ getAll().then((response) => {
   align-items: center;
   gap: 0.5em;
   font-size: small;
+  padding-bottom: 2rem;
 }
 
 .user-item {
