@@ -7,8 +7,12 @@ INSERT INTO public.posts (id, user_id, image_url, type_of_activity, duration, lo
 (1, 1, 'https://picsum.photos/id/7/200/200', 'Running', '30 minutes', 'Central Park', 'Had a great run today!', 'Morning Run', '2023-10-01'),
 (2, 2, 'https://picsum.photos/id/6/200/200', 'Cycling', '1 hour', 'River Trail', 'Enjoyed a beautiful ride!', 'Evening Cycle', '2023-10-02'),
 (3, 3, 'https://picsum.photos/id/5/200/200', 'Yoga', '1 hour', 'Home', 'Feeling relaxed after yoga.', 'Yoga Session', '11/01/2000');
-INSERT INTO public.comments (comment_message, user_id, post_id, created_on) VALUES
+INSERT INTO public.comments (comment_message, user_id, post_id) VALUES
 ('Great post!', 1, 1),
 ('Thanks for sharing!', 2, 1),
 ('I love yoga too!', 3, 3),
 ('Wow!', 6, 2);
+INSERT INTO public.friendships (id, user_initiated_id, user_accepted_id) VALUES
+(1, 1, 2),
+(2, 2, 3),
+(3, 3, 1);

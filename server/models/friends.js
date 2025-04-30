@@ -1,7 +1,7 @@
 const { CustomError, statusCodes } = require("./errors");
 const { connect } = require("./supabase");
 
-const TABLE_NAME = "posts";
+const TABLE_NAME = "friendships";
 
 const BaseQuery = () => connect().from(TABLE_NAME).select("*");
 
@@ -24,36 +24,12 @@ async function get(id) {
     .select("*")
     .eq("id", id);
   if (!item.length) {
-    throw new CustomError("post not found", statusCodes.NOT_FOUND);
+    throw new CustomError("Friend not found", statusCodes.NOT_FOUND);
   }
   if (error) {
     throw error;
   }
   return item[0];
-}
-
-async function search(
-  query,
-  limit = 30,
-  offset = 0,
-  sort = "id",
-  order = "desc"
-) {
-  const {
-    data: items,
-    error,
-    count,
-  } = await BaseQuery()
-    .or(`title.ilike.%${query}%,type_of_activity.ilike.%${query}%`)
-    .order(sort, { ascending: order === "asc" })
-    .range(offset, offset + limit - 1);
-  if (error) {
-    throw error;
-  }
-  return {
-    items,
-    total: count,
-  };
 }
 
 async function create(item) {
@@ -93,7 +69,6 @@ async function remove(id) {
 module.exports = {
   getAll,
   get,
-  search,
   create,
   update,
   remove,

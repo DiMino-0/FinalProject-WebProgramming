@@ -5,6 +5,9 @@ GET {{rootUrl}}users
 
 ### GET
 GET {{rootUrl}}posts
+
+### GET
+GET {{rootUrl}}friends
 ### POST
 POST {{rootUrl}}users
 Content-Type: application/json
