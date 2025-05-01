@@ -1,13 +1,16 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
 import { getAll, type User } from '@/models/users'
-import { api } from '@/models/session'
+import { api, refSession } from '@/models/session'
+import { useRouter } from 'vue-router'
 
 const searchTerm = ref('')
 const searchResults = ref<User[]>([])
 const isLoading = ref(false)
 const hasSearched = ref(false)
 const searchTimeout = ref<number | null>(null)
+const router = useRouter()
+const session = refSession()
 
 // Function to search users
 const searchUsers = async () => {
@@ -58,10 +61,13 @@ const loadAllUsers = async () => {
 
 // Initialize with all users
 loadAllUsers()
+
+// Function to navigate to user profile
+const viewUserProfile = (userId: number) => {
+  router.push(`/profile/${userId}`)
+}
 </script>
 
-<!-- TODO: Users should be able to request to add a friend from here -->
-<!-- Additionally, i need to implement a system for handling friend requests -->
 <template>
   <main>
     <section class="search body-container">
@@ -118,7 +124,28 @@ loadAllUsers()
                   <div class="content">
                     <p><strong>Role:</strong> {{ user.role }}</p>
                     <p v-if="user.gender"><strong>Gender:</strong> {{ user.gender }}</p>
-                    <p class="has-text-grey is-size-7">User ID: {{ user.id }}</p>
+                    <p class="has-text-white is-size-7">User ID: {{ user.id }}</p>
+
+                    <!-- Add profile button -->
+                    <div class="buttons mt-3">
+                      <button class="button is-link is-small" @click="viewUserProfile(user.id)">
+                        <span class="icon is-small">
+                          <i class="fas fa-user"></i>
+                        </span>
+                        <span>View Profile</span>
+                      </button>
+
+                      <!-- Only show add friend button for users who aren't current user -->
+                      <button
+                        v-if="session.user && user.id !== session.user.id"
+                        class="button is-success is-small"
+                      >
+                        <span class="icon is-small">
+                          <i class="fas fa-user-plus"></i>
+                        </span>
+                        <span>Add Friend</span>
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -145,10 +172,12 @@ loadAllUsers()
 }
 
 .user-card {
+  color: white;
   height: 100%;
   transition:
     transform 0.2s ease,
     box-shadow 0.2s ease;
+  background-color: rgb(233, 75, 75);
 }
 
 .user-card:hover {
@@ -164,5 +193,13 @@ loadAllUsers()
   object-fit: cover;
   width: 48px;
   height: 48px;
+}
+
+.mt-3 {
+  margin-top: 1rem;
+}
+
+.buttons {
+  justify-content: flex-start;
 }
 </style>
