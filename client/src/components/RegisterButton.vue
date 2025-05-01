@@ -2,6 +2,11 @@
 import { apiCustomMethod, isLoggedIn } from '../models/session'
 import { ref } from 'vue'
 
+// Add defineOptions to set inheritAttrs to false
+defineOptions({
+  inheritAttrs: false,
+})
+
 // State to control modal visibility
 const isModalActive = ref(false)
 
@@ -50,7 +55,7 @@ const handleRegister = () => {
 </script>
 
 <template>
-  <div class="buttons" v-if="!isLoggedIn()">
+  <div class="buttons" v-if="!isLoggedIn()" v-bind="$attrs">
     <div class="navbar-item">
       <a class="button is-dark" @click="toggleModal">Register</a>
     </div>

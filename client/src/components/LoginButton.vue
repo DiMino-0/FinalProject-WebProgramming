@@ -3,6 +3,11 @@ import { refSession, login, logout, isLoggedIn } from '../models/session'
 import { ref } from 'vue'
 import { getAll, type User } from '../models/users'
 
+// Add defineOptions to set inheritAttrs to false
+defineOptions({
+  inheritAttrs: false,
+})
+
 const users = ref<User[]>([])
 const session = refSession()
 
@@ -13,7 +18,7 @@ getAll().then((response) => {
 <!-- TODO: Show fields to login checking db for the user, NEED AUTH -->
 
 <template>
-  <div class="buttons" v-if="!isLoggedIn()">
+  <div class="buttons" v-if="!isLoggedIn()" v-bind="$attrs">
     <div class="navbar-item has-dropdown is-hoverable">
       <a class="button is-light"> Log in </a>
 
@@ -36,7 +41,7 @@ getAll().then((response) => {
       </div>
     </div>
   </div>
-  <div class="profile" v-else>
+  <div class="profile" v-else v-bind="$attrs">
     <img :src="session?.user?.pfp_image_url" alt="user avatar" />
     <div>
       {{ session.user?.username }} {{ session.user?.email }} (<a @click="logout()">Log out</a>)

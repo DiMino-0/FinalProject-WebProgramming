@@ -1,5 +1,6 @@
 require("dotenv").config();
 const express = require("express");
+const { statusCodes } = require("./models/errors");
 
 const usersController = require("./controllers/users");
 const postsController = require("./controllers/posts");
@@ -18,7 +19,10 @@ app.use((req, res, next) => {
     "Access-Control-Allow-Headers",
     "Origin, X-Requested-With, Content-Type, Accept"
   );
-  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+  res.header(
+    "Access-Control-Allow-Methods",
+    "GET, POST, PATCH, PUT, DELETE, OPTIONS"
+  );
   if (req.method === "OPTIONS") {
     return res.sendStatus(200);
   }

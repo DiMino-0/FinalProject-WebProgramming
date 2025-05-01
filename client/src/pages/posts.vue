@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { isLoggedIn, refSession, apiCustomMethod } from '@/models/session'
-import { get, getAll } from '@/models/users'
+import { getAll } from '@/models/users'
 import type { Comment } from '@/models/comment'
-import { type Post } from '@/models/post'
+import { type Post, updatePost as apiUpdatePost } from '@/models/post'
 import { activityTypes } from '@/models/activityTypes'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
@@ -54,6 +54,8 @@ dayjs.extend(relativeTime)
 
 // New post form and modal state
 const isModalActive = ref(false)
+const editMode = ref(false)
+const editPostId = ref<number | null>(null)
 const newPost = ref({
   title: '',
   post_message: '',
@@ -69,9 +71,14 @@ const isSubmitting = ref(false)
 // Toggle modal visibility
 const toggleModal = () => {
   isModalActive.value = !isModalActive.value
-  // Reset form when opening
-  if (isModalActive.value) {
+  // Reset form when opening in create mode
+  if (isModalActive.value && !editMode.value) {
     resetForm()
+  }
+  // Reset edit mode when closing
+  if (!isModalActive.value) {
+    editMode.value = false
+    editPostId.value = null
   }
 }
 
@@ -87,6 +94,26 @@ const resetForm = () => {
     date: dayjs().format('YYYY-MM-DD'),
   }
   formErrors.value = []
+}
+
+// Open edit modal with post data
+const editPost = (post: Post) => {
+  editMode.value = true
+  editPostId.value = post.id
+
+  // Load post data into form
+  newPost.value = {
+    title: post.title,
+    post_message: post.post_message,
+    type_of_activity: post.type_of_activity,
+    duration: post.duration,
+    location: post.location || '',
+    image_url: post.image_url || '',
+    date: post.date,
+  }
+
+  // Open the modal
+  isModalActive.value = true
 }
 
 // Validate form before submission
@@ -112,7 +139,7 @@ const validateForm = () => {
   return formErrors.value.length === 0
 }
 
-// Submit the new post
+// Submit the new post or update existing post
 const createPost = () => {
   if (!validateForm()) return
 
@@ -148,6 +175,53 @@ const createPost = () => {
     .finally(() => {
       isSubmitting.value = false
     })
+}
+
+// Update an existing post
+const updatePost = () => {
+  if (!validateForm() || !editPostId.value) return
+
+  isSubmitting.value = true
+
+  // Prepare data for update
+  const postData = {
+    ...newPost.value,
+    date: dayjs().format('YYYY-MM-DD'), // Update to current date
+  }
+
+  // Use the API's updatePost function instead of direct apiCustomMethod call
+  apiUpdatePost(editPostId.value, postData)
+    .then((response) => {
+      // Update the post in the local array
+      const updatedPost = response as Post
+      const index = posts.value.findIndex((post) => post.id === editPostId.value)
+
+      if (index !== -1) {
+        posts.value[index] = updatedPost
+      }
+
+      // Close modal
+      toggleModal()
+
+      // Show success message
+      alert('Post updated successfully!')
+    })
+    .catch((error) => {
+      console.error('Error updating post:', error)
+      formErrors.value = ['Failed to update post. Please try again.']
+    })
+    .finally(() => {
+      isSubmitting.value = false
+    })
+}
+
+// Submit handler that routes to the correct function
+const submitForm = () => {
+  if (editMode.value) {
+    updatePost()
+  } else {
+    createPost()
+  }
 }
 </script>
 
@@ -197,6 +271,12 @@ const createPost = () => {
                     <p class="subtitle is-6 has-text-white">
                       <strong>Author:</strong> {{ session.user?.username }}
                     </p>
+                    <div class="post-actions">
+                      <button class="button is-small is-info" @click="editPost(post)">
+                        <span class="icon"><i class="fas fa-edit"></i></span>
+                        <span>Edit</span>
+                      </button>
+                    </div>
                   </div>
 
                   <div class="card-content comments-section">
@@ -239,12 +319,12 @@ const createPost = () => {
           </template>
         </div>
 
-        <!-- Create Post Modal -->
+        <!-- Create/Edit Post Modal -->
         <div class="modal" :class="{ 'is-active': isModalActive }">
           <div class="modal-background" @click="toggleModal"></div>
           <div class="modal-card">
             <header class="modal-card-head">
-              <p class="modal-card-title">Create New Post</p>
+              <p class="modal-card-title">{{ editMode ? 'Edit Post' : 'Create New Post' }}</p>
               <button class="delete" aria-label="close" @click="toggleModal"></button>
             </header>
             <section class="modal-card-body">
@@ -349,11 +429,11 @@ const createPost = () => {
             <footer class="modal-card-foot">
               <button
                 class="button is-primary"
-                @click="createPost"
+                @click="submitForm"
                 :class="{ 'is-loading': isSubmitting }"
                 :disabled="isSubmitting"
               >
-                Create Post
+                {{ editMode ? 'Update Post' : 'Create Post' }}
               </button>
               <button class="button" @click="toggleModal" :disabled="isSubmitting">Cancel</button>
             </footer>
@@ -449,5 +529,19 @@ const createPost = () => {
 
 .select select option {
   color: #363636;
+}
+
+.post-actions {
+  margin-top: 1rem;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.post-actions .button {
+  transition: all 0.2s ease;
+}
+
+.post-actions .button:hover {
+  transform: translateY(-2px);
 }
 </style>

@@ -26,3 +26,7 @@ export function getAllByUserId(id: number): Promise<DataListEnvelope<Post>> {
 export function createPost(post: Partial<Post>): Promise<Post> {
   return apiCustomMethod('posts', 'POST', post)
 }
+
+export function updatePost(id: number, post: Partial<Post>): Promise<Post> {
+  return apiCustomMethod(`posts/${id}`, 'PATCH', post)
+}
