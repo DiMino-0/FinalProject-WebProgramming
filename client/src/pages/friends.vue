@@ -238,7 +238,7 @@ const submitComment = (postId: number) => {
 
           <!-- Friends cards -->
           <div v-else class="columns is-multiline">
-            <div v-for="friend in myFriends" :key="friend.id" class="column is-one-third">
+            <div v-for="friend in myFriends" :key="friend.id" class="column is-full">
               <div class="card friend-card">
                 <div class="card-content">
                   <div class="media">

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { isLoggedIn, refSession, apiCustomMethod } from '@/models/session'
-import { getAll } from '@/models/users'
+import { getAll, type User } from '@/models/users'
 import type { Comment } from '@/models/comment'
 import { type Post, updatePost as apiUpdatePost } from '@/models/post'
 import { activityTypes } from '@/models/activityTypes'
@@ -12,15 +12,13 @@ const session = refSession()
 const posts = ref(<Post[]>[])
 const comments = ref(<Comment[]>[])
 const isLoading = ref(false)
-const users = ref<any[]>([]) // Store all users for reference
+const users = ref<User[]>([])
 
-// Helper function to get comments for a specific post
 const getCommentsForPost = (postId: number) => {
   // Ensure both are treated as numbers during comparison
   return comments.value.filter((comment) => Number(comment.post_id) === Number(postId))
 }
 
-// Find user by ID from list of all users
 const findUserById = (userId: number) => {
   if (session.value.user?.id === userId) return session.value.user
   return users.value.find((user) => user.id === userId)
@@ -52,7 +50,6 @@ watchEffect(() => {
 
 dayjs.extend(relativeTime)
 
-// New post form and modal state
 const isModalActive = ref(false)
 const editMode = ref(false)
 const editPostId = ref<number | null>(null)
@@ -152,20 +149,14 @@ const createPost = () => {
     user_id: session.value.user?.id,
   }
 
-  // Send request to API
+  // API call to create a new post
   apiCustomMethod('posts', 'POST', postData)
     .then((response) => {
-      // Add new post to the list
-      if (Array.isArray(response)) {
-        posts.value = [...posts.value, ...(response as Post[])]
-      } else {
-        posts.value = [...posts.value, response as Post]
-      }
+      const newPost = Array.isArray(response) ? response[0] : response
+      posts.value = [...posts.value, newPost]
 
-      // Close modal and reset form
       toggleModal()
 
-      // Show success message
       alert('Post created successfully!')
     })
     .catch((error) => {
@@ -186,18 +177,30 @@ const updatePost = () => {
   // Prepare data for update
   const postData = {
     ...newPost.value,
-    date: dayjs().format('YYYY-MM-DD'), // Update to current date
+    date: dayjs().format('YYYY-MM-DD'),
   }
 
-  // Use the API's updatePost function instead of direct apiCustomMethod call
   apiUpdatePost(editPostId.value, postData)
     .then((response) => {
-      // Update the post in the local array
       const updatedPost = response as Post
       const index = posts.value.findIndex((post) => post.id === editPostId.value)
 
       if (index !== -1) {
-        posts.value[index] = updatedPost
+        // Create a new array and replace the specific post
+        const updatedPosts = [...posts.value]
+        updatedPosts[index] = {
+          ...posts.value[index],
+          ...updatedPost,
+          title: postData.title,
+          post_message: postData.post_message,
+          type_of_activity: postData.type_of_activity,
+          duration: postData.duration,
+          location: postData.location,
+          image_url: postData.image_url,
+          date: postData.date,
+        }
+        // Replace entire array to trigger reactivity
+        posts.value = updatedPosts
       }
 
       // Close modal
@@ -258,7 +261,11 @@ const submitForm = () => {
           </div>
           <template v-else>
             <div class="columns is-multiline">
-              <div v-for="post in posts" :key="post.id" class="column is-one-third">
+              <div
+                v-for="post in posts"
+                :key="post.id + (post.created_on || '')"
+                class="column is-full"
+              >
                 <div class="card post">
                   <div class="card-content">
                     <h2 class="title is-4 has-text-white">{{ post.title }}</h2>
@@ -269,7 +276,8 @@ const submitForm = () => {
                       <strong>Created at:</strong> {{ dayjs(post.created_on).fromNow() }}
                     </p>
                     <p class="subtitle is-6 has-text-white">
-                      <strong>Author:</strong> {{ session.user?.username }}
+                      <strong>Author:</strong>
+                      {{ findUserById(post.user_id)?.username || 'Unknown' }}
                     </p>
                     <div class="post-actions">
                       <button class="button is-small is-info" @click="editPost(post)">
@@ -294,12 +302,12 @@ const submitForm = () => {
                       >
                         <div class="comment-user">
                           <img
-                            :src="findUserById(comment.user_id).pfp_image_url || 'imageNotFound'"
+                            :src="findUserById(comment.user_id)?.pfp_image_url || 'imageNotFound'"
                             alt="User avatar"
                             class="comment-avatar"
                           />
                           <span class="comment-username has-text-white">
-                            {{ findUserById(comment.user_id).username }}
+                            {{ findUserById(comment.user_id)?.username || 'Unknown User' }}
                           </span>
                         </div>
                         <div class="comment-content">
