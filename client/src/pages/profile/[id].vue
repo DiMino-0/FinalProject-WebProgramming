@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, watchEffect } from 'vue'
+import { ref, watchEffect } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { get as getUser, type User } from '@/models/users'
 import { getAllByUserId, type Post } from '@/models/post'
@@ -22,6 +22,8 @@ const error = ref<string | null>(null)
 const friendships = ref<Friend[]>([])
 const isFriend = ref(false)
 const isSendingRequest = ref(false)
+
+// TODO!!: Fully implement the friend request system
 
 // Check if the viewed user is a friend of the current user
 const checkFriendshipStatus = () => {

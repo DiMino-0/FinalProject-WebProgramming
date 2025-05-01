@@ -2,12 +2,6 @@
 import { apiCustomMethod, isLoggedIn } from '../models/session'
 import { ref } from 'vue'
 
-// Add defineOptions to set inheritAttrs to false
-defineOptions({
-  inheritAttrs: false,
-})
-
-// State to control modal visibility
 const isModalActive = ref(false)
 
 // Form data
@@ -52,6 +46,11 @@ const handleRegister = () => {
       alert('Registration failed. Please try again.')
     })
 }
+
+// Add defineOptions to set inheritAttrs to false, for a vue warning
+defineOptions({
+  inheritAttrs: false,
+})
 </script>
 
 <template>

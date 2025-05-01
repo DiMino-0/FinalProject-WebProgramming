@@ -18,7 +18,6 @@ const notification = ref({ message: '', type: '', show: false })
 
 const session = refSession()
 
-// Function to delete a user
 const deleteUser = async (userId: number) => {
   if (!confirm(`Are you sure you want to delete user #${userId}?`)) {
     return
@@ -28,16 +27,12 @@ const deleteUser = async (userId: number) => {
     isLoading.value = true
     await apiDeleteUser(userId)
       .then(() => {
-        // Remove the deleted user from the users array
         users.value = users.value.filter((user) => user.id !== userId)
 
-        // Remove the user's posts from the posts array
         posts.value = posts.value.filter((post) => post.user_id !== userId)
 
-        // Remove the user's comments from the comments array
         comments.value = comments.value.filter((comment) => comment.user_id !== userId)
 
-        // Remove friendships involving the deleted user
         friendships.value = friendships.value.filter(
           (friendship) =>
             friendship.user_initiated_id !== userId && friendship.user_accepted_id !== userId,
@@ -59,7 +54,6 @@ const deleteUser = async (userId: number) => {
   }
 }
 
-// Helper function to show notifications
 const showNotification = (message: string, type: string) => {
   notification.value = { message, type, show: true }
   setTimeout(() => {
@@ -92,7 +86,6 @@ watchEffect(() => {
   }
 })
 
-// Helper function to get username by user ID
 const getUsernameById = (userId: number): string => {
   const user = users.value.find((u) => u.id === userId)
   return user ? user.username : `User #${userId}`

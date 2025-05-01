@@ -7,6 +7,8 @@ export function rest<T>(url: string): Promise<T> {
 export function api<T>(action: string): Promise<T> {
   return rest<T>(`${API_ROOT}${action}`)
 }
+
+// Is redundant b/c of apiCustomMethod
 export function apiDelete<T>(action: string): Promise<T> {
   return fetch(`${API_ROOT}${action}`, {
     method: 'DELETE',

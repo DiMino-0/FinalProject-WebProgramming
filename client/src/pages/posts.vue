@@ -6,7 +6,7 @@ import { type Post, updatePost as apiUpdatePost } from '@/models/post'
 import { activityTypes } from '@/models/activityTypes'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
-import { ref, watchEffect, computed } from 'vue'
+import { ref, watchEffect } from 'vue'
 
 const session = refSession()
 const posts = ref(<Post[]>[])
@@ -65,21 +65,17 @@ const newPost = ref({
 const formErrors = ref<string[]>([])
 const isSubmitting = ref(false)
 
-// Toggle modal visibility
 const toggleModal = () => {
   isModalActive.value = !isModalActive.value
-  // Reset form when opening in create mode
   if (isModalActive.value && !editMode.value) {
     resetForm()
   }
-  // Reset edit mode when closing
   if (!isModalActive.value) {
     editMode.value = false
     editPostId.value = null
   }
 }
 
-// Reset form to default values
 const resetForm = () => {
   newPost.value = {
     title: '',
@@ -93,7 +89,6 @@ const resetForm = () => {
   formErrors.value = []
 }
 
-// Open edit modal with post data
 const editPost = (post: Post) => {
   editMode.value = true
   editPostId.value = post.id
@@ -109,7 +104,6 @@ const editPost = (post: Post) => {
     date: post.date,
   }
 
-  // Open the modal
   isModalActive.value = true
 }
 
@@ -136,20 +130,17 @@ const validateForm = () => {
   return formErrors.value.length === 0
 }
 
-// Submit the new post or update existing post
 const createPost = () => {
   if (!validateForm()) return
 
   isSubmitting.value = true
 
-  // Add user_id to post data and ensure date is current
   const postData = {
     ...newPost.value,
     date: dayjs().format('YYYY-MM-DD'), // Always use current date
     user_id: session.value.user?.id,
   }
 
-  // API call to create a new post
   apiCustomMethod('posts', 'POST', postData)
     .then((response) => {
       const newPost = Array.isArray(response) ? response[0] : response
@@ -168,7 +159,6 @@ const createPost = () => {
     })
 }
 
-// Update an existing post
 const updatePost = () => {
   if (!validateForm() || !editPostId.value) return
 
@@ -203,10 +193,7 @@ const updatePost = () => {
         posts.value = updatedPosts
       }
 
-      // Close modal
       toggleModal()
-
-      // Show success message
       alert('Post updated successfully!')
     })
     .catch((error) => {

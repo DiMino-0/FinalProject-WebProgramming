@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
 import { getAll, type User } from '@/models/users'
-import { api, refSession } from '@/models/session'
+import { api } from '@/models/session'
 import { useRouter } from 'vue-router'
 
 const searchTerm = ref('')
@@ -10,7 +10,6 @@ const isLoading = ref(false)
 const hasSearched = ref(false)
 const searchTimeout = ref<number | null>(null)
 const router = useRouter()
-const session = refSession()
 
 // Function to search users
 const searchUsers = async () => {
@@ -59,13 +58,11 @@ const loadAllUsers = async () => {
   }
 }
 
-// Initialize with all users
-loadAllUsers()
-
-// Function to navigate to user profile
 const viewUserProfile = (userId: number) => {
   router.push(`/profile/${userId}`)
 }
+
+loadAllUsers()
 </script>
 
 <template>

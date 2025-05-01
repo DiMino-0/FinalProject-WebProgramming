@@ -2,10 +2,9 @@
 import { computed, ref, watchEffect } from 'vue'
 import { isLoggedIn, refSession } from '@/models/session'
 import { getAll as getAllPosts, type Post } from '@/models/post'
-import { activityTypes, type ActivityType } from '@/models/activityTypes'
+import { activityTypes } from '@/models/activityTypes'
 import dayjs from 'dayjs'
 
-// Initialize reactive references
 const session = refSession()
 const posts = ref<Post[]>([])
 const isLoading = ref(false)
@@ -15,7 +14,6 @@ const stats = ref({
   allTime: { activities: 0, duration: 0, types: {} as Record<string, number> },
 })
 
-// Helper function to extract minutes from duration string (e.g., "30 minutes" -> 30)
 function extractMinutes(duration: string): number {
   const match = duration?.match(/(\d+)\s*minutes?/i)
   if (match && match[1]) {
@@ -31,7 +29,6 @@ function extractMinutes(duration: string): number {
   return 0
 }
 
-// Filter posts for today
 const todayPosts = computed(() => {
   const today = dayjs().format('YYYY-MM-DD')
   return posts.value.filter((post) => {
@@ -40,7 +37,6 @@ const todayPosts = computed(() => {
   })
 })
 
-// Filter posts for this week
 const thisWeekPosts = computed(() => {
   const oneWeekAgo = dayjs().subtract(7, 'day')
   return posts.value.filter((post) => {
@@ -49,12 +45,10 @@ const thisWeekPosts = computed(() => {
   })
 })
 
-// All posts
 const allTimePosts = computed(() => {
   return posts.value
 })
 
-// Calculate statistics for each time period
 function calculateStatsForPosts(postsList: Post[]) {
   const types: Record<string, number> = {}
 
@@ -66,13 +60,10 @@ function calculateStatsForPosts(postsList: Post[]) {
   let totalDuration = 0
 
   postsList.forEach((post) => {
-    // Normalize activity type to match our centralized types if possible
+    // Normalize activity type to match the centralized types
     const activityType = post.type_of_activity.toLowerCase()
 
-    // Count activity types
     types[activityType] = (types[activityType] || 0) + 1
-
-    // Sum durations
     totalDuration += extractMinutes(post.duration)
   })
 
@@ -130,14 +121,8 @@ const todayActiveTypes = computed(() => {
 const thisWeekActiveTypes = computed(() => {
   return activityTypes.filter((type) => stats.value.thisWeek.types[type.id] > 0)
 })
-
-// Helper to get color class for activity type
-function getColorForActivityType(type: string): string {
-  const activityType = activityTypes.find((t) => t.id.toLowerCase() === type.toLowerCase())
-  return activityType?.color || 'is-light'
-}
 </script>
-<!-- TODO: Beautification needed, perhaps Buefy-ication lol (consult bulma first)-->
+
 <template>
   <main>
     <section class="statistics body-container">

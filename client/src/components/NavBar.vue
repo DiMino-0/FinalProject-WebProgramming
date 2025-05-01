@@ -63,7 +63,6 @@ const showBurger = ref(false)
   background-color: #32ae9b;
 }
 
-/* Move the navbar-end buttons down */
 .navbar-end {
   padding-top: 1rem;
   margin-bottom: -1rem;

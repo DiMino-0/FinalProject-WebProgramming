@@ -59,6 +59,8 @@ INSERT INTO public.comments (comment_message, user_id, post_id) VALUES
 ('How difficult was that climb?', 2, 10),
 ('Any tips for beginners?', 6, 11);
 
+-- Seed will need to be updated b/c of new status column, but friend request system is not implemented yet
+-- Will work, but should not allow null status in the future
 INSERT INTO public.friendships (id, user_initiated_id, user_accepted_id) VALUES
 (1, 1, 2),
 (2, 2, 3),

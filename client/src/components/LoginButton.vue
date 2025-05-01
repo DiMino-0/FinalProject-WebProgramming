@@ -4,20 +4,18 @@ import { ref } from 'vue'
 import { getAll, type User } from '../models/users'
 import { useRouter } from 'vue-router'
 
-// Add defineOptions to set inheritAttrs to false
+const users = ref<User[]>([])
+const session = refSession()
+const router = useRouter()
+
+// Add defineOptions to set inheritAttrs to false, to resolve vue warning
 defineOptions({
   inheritAttrs: false,
 })
 
-const users = ref<User[]>([])
-const session = refSession()
-
 getAll().then((response) => {
   users.value = response.items
 })
-
-// Add a router instance
-const router = useRouter()
 
 // Function to navigate to profile page
 function navigateToProfile() {
@@ -65,7 +63,6 @@ function navigateToProfile() {
   overflow-y: auto;
 }
 
-/* Add these rules to properly position the dropdown */
 .navbar-item.has-dropdown.is-hoverable {
   position: relative;
 }

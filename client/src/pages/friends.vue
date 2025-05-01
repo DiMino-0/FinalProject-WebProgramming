@@ -4,29 +4,23 @@ import { isLoggedIn, refSession, apiCustomMethod } from '@/models/session'
 import { getAll as getAllFriends, type Friend } from '@/models/friend'
 import { type User } from '@/models/users'
 import { getAllByUserId, type Post } from '@/models/post'
+import { getAllComments } from '@/models/comment'
 import type { Comment } from '@/models/comment'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 
 dayjs.extend(relativeTime)
 
-// Initialize reactive references
 const session = refSession()
 const friendships = ref<Friend[]>([])
 const isLoading = ref(false)
 const myFriends = ref<User[]>([])
-
-// Track which friend's posts are being viewed
 const viewingPostsOfFriendId = ref<number | null>(null)
 const friendPosts = ref<Post[]>([])
 const loadingPosts = ref(false)
-
-// New comment form data
 const newCommentText = ref<string>('')
 const submittingComment = ref(false)
 const commentingOnPostId = ref<number | null>(null)
-
-// Add a ref to store comments for each post
 const postComments = ref<{ [postId: number]: Comment[] }>({})
 
 // Function to find friendship date for a specific friend
@@ -127,25 +121,23 @@ const viewFriendPosts = (friendId: number) => {
         })
 
         // Fetch all comments
-        import('@/models/comment').then(({ getAllComments }) => {
-          getAllComments()
-            .then((commentsResponse) => {
-              // Filter and organize comments by post ID
-              commentsResponse.items.forEach((comment) => {
-                if (response.items.some((post) => post.id === comment.post_id)) {
-                  if (!commentMap[comment.post_id]) {
-                    commentMap[comment.post_id] = []
-                  }
-                  commentMap[comment.post_id].push(comment)
+        getAllComments()
+          .then((commentsResponse) => {
+            // Filter and organize comments by post ID
+            commentsResponse.items.forEach((comment) => {
+              if (response.items.some((post) => post.id === comment.post_id)) {
+                if (!commentMap[comment.post_id]) {
+                  commentMap[comment.post_id] = []
                 }
-              })
+                commentMap[comment.post_id].push(comment)
+              }
+            })
 
-              postComments.value = commentMap
-            })
-            .catch((error) => {
-              console.error('Error loading comments:', error)
-            })
-        })
+            postComments.value = commentMap
+          })
+          .catch((error) => {
+            console.error('Error loading comments:', error)
+          })
       }
     })
     .catch((error) => {
@@ -164,13 +156,10 @@ const getCommentUser = (userId: number) => {
   )
 }
 
-// Toggle comment form for a specific post
 const toggleCommentForm = (postId: number | null) => {
   commentingOnPostId.value = postId
   newCommentText.value = ''
 }
-
-// Submit a new comment - update to refresh comments after submission
 const submitComment = (postId: number) => {
   if (!newCommentText.value.trim() || !session.value.user?.id) return
 

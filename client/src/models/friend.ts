@@ -13,6 +13,7 @@ export function getAll(): Promise<DataListEnvelope<Friend>> {
   return api('friends')
 }
 
+//TODO: users currently don't have a way to accept or reject friend requests, so this function is not used
 // function to patch a friendship
 export function updateFriend(id: number, friend: Partial<Friend>): Promise<Friend> {
   return apiCustomMethod(`friends/${id}`, 'PATCH', friend)
