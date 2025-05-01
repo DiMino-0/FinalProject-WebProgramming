@@ -1,5 +1,5 @@
 import type { DataListEnvelope } from './dataEnvelope'
-import { api } from './session'
+import { api, apiCustomMethod } from './session'
 
 export interface Post {
   id: number
@@ -18,6 +18,11 @@ export interface Post {
 export function getAll(): Promise<DataListEnvelope<Post>> {
   return api(`posts`)
 }
+
 export function getAllByUserId(id: number): Promise<DataListEnvelope<Post>> {
   return api(`posts/user/${id}`)
+}
+
+export function createPost(post: Partial<Post>): Promise<Post> {
+  return apiCustomMethod('posts', 'POST', post)
 }

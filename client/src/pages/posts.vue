@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import { isLoggedIn, refSession } from '@/models/session'
+import { isLoggedIn, refSession, apiCustomMethod } from '@/models/session'
 import { get, getAll } from '@/models/users'
 import type { Comment } from '@/models/comment'
 import { type Post } from '@/models/post'
+import { activityTypes } from '@/models/activityTypes'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import { ref, watchEffect, computed } from 'vue'
@@ -50,14 +51,120 @@ watchEffect(() => {
 })
 
 dayjs.extend(relativeTime)
+
+// New post form and modal state
+const isModalActive = ref(false)
+const newPost = ref({
+  title: '',
+  post_message: '',
+  type_of_activity: '',
+  duration: '',
+  location: '',
+  image_url: '',
+  date: dayjs().format('YYYY-MM-DD'),
+})
+const formErrors = ref<string[]>([])
+const isSubmitting = ref(false)
+
+// Toggle modal visibility
+const toggleModal = () => {
+  isModalActive.value = !isModalActive.value
+  // Reset form when opening
+  if (isModalActive.value) {
+    resetForm()
+  }
+}
+
+// Reset form to default values
+const resetForm = () => {
+  newPost.value = {
+    title: '',
+    post_message: '',
+    type_of_activity: '',
+    duration: '',
+    location: '',
+    image_url: '',
+    date: dayjs().format('YYYY-MM-DD'),
+  }
+  formErrors.value = []
+}
+
+// Validate form before submission
+const validateForm = () => {
+  formErrors.value = []
+
+  if (!newPost.value.title.trim()) {
+    formErrors.value.push('Title is required')
+  }
+
+  if (!newPost.value.post_message.trim()) {
+    formErrors.value.push('Post message is required')
+  }
+
+  if (!newPost.value.type_of_activity.trim()) {
+    formErrors.value.push('Activity type is required')
+  }
+
+  if (!newPost.value.duration.trim()) {
+    formErrors.value.push('Duration is required')
+  }
+
+  return formErrors.value.length === 0
+}
+
+// Submit the new post
+const createPost = () => {
+  if (!validateForm()) return
+
+  isSubmitting.value = true
+
+  // Add user_id to post data and ensure date is current
+  const postData = {
+    ...newPost.value,
+    date: dayjs().format('YYYY-MM-DD'), // Always use current date
+    user_id: session.value.user?.id,
+  }
+
+  // Send request to API
+  apiCustomMethod('posts', 'POST', postData)
+    .then((response) => {
+      // Add new post to the list
+      if (Array.isArray(response)) {
+        posts.value = [...posts.value, ...(response as Post[])]
+      } else {
+        posts.value = [...posts.value, response as Post]
+      }
+
+      // Close modal and reset form
+      toggleModal()
+
+      // Show success message
+      alert('Post created successfully!')
+    })
+    .catch((error) => {
+      console.error('Error creating post:', error)
+      formErrors.value = ['Failed to create post. Please try again.']
+    })
+    .finally(() => {
+      isSubmitting.value = false
+    })
+}
 </script>
-<!-- TODO: Users should be able to modify any/all posts/comments that they have made, AND create new ones from this screen -->
+
 <template>
   <main>
     <section class="body-container">
       <div class="container has-text-black">
         <div class="header">
-          <h1 class="title is-1 has-text-black">Posts</h1>
+          <div class="is-flex is-justify-content-space-between is-align-items-center">
+            <h1 class="title is-1 has-text-black">Posts</h1>
+            <button v-if="isLoggedIn()" @click="toggleModal" class="button is-primary">
+              <span class="icon">
+                <i class="fas fa-plus"></i>
+              </span>
+              <span>Create Post</span>
+            </button>
+          </div>
           <div v-if="isLoggedIn() && posts.length > 0" class="subtitle-container">
             <h2 class="subtitle has-text-black">
               <span class="manage-text">Manage your posts here!</span>
@@ -130,6 +237,127 @@ dayjs.extend(relativeTime)
               </div>
             </div>
           </template>
+        </div>
+
+        <!-- Create Post Modal -->
+        <div class="modal" :class="{ 'is-active': isModalActive }">
+          <div class="modal-background" @click="toggleModal"></div>
+          <div class="modal-card">
+            <header class="modal-card-head">
+              <p class="modal-card-title">Create New Post</p>
+              <button class="delete" aria-label="close" @click="toggleModal"></button>
+            </header>
+            <section class="modal-card-body">
+              <!-- Form Errors -->
+              <div v-if="formErrors.length > 0" class="notification is-danger">
+                <ul>
+                  <li v-for="(error, index) in formErrors" :key="index">{{ error }}</li>
+                </ul>
+              </div>
+
+              <!-- Post Form -->
+              <div class="field">
+                <label class="label">Title</label>
+                <div class="control">
+                  <input
+                    class="input"
+                    type="text"
+                    v-model="newPost.title"
+                    placeholder="Post title"
+                  />
+                </div>
+              </div>
+
+              <div class="field">
+                <label class="label">Message</label>
+                <div class="control">
+                  <textarea
+                    class="textarea"
+                    v-model="newPost.post_message"
+                    placeholder="Write your post content here"
+                  ></textarea>
+                </div>
+              </div>
+
+              <div class="columns">
+                <div class="column">
+                  <div class="field">
+                    <label class="label">Activity Type</label>
+                    <div class="control">
+                      <div class="select is-fullwidth">
+                        <select v-model="newPost.type_of_activity">
+                          <option value="" disabled>Select activity type</option>
+                          <option
+                            v-for="activity in activityTypes"
+                            :key="activity.id"
+                            :value="activity.id"
+                          >
+                            {{ activity.label }}
+                          </option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="column">
+                  <div class="field">
+                    <label class="label">Duration</label>
+                    <div class="control">
+                      <input
+                        class="input"
+                        type="text"
+                        v-model="newPost.duration"
+                        placeholder="e.g. 30 minutes, 1 hour"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="field">
+                <label class="label">Location (optional)</label>
+                <div class="control">
+                  <input
+                    class="input"
+                    type="text"
+                    v-model="newPost.location"
+                    placeholder="Where did this activity take place?"
+                  />
+                </div>
+              </div>
+
+              <div class="field">
+                <label class="label">Image URL (optional)</label>
+                <div class="control">
+                  <input
+                    class="input"
+                    type="text"
+                    v-model="newPost.image_url"
+                    placeholder="https://example.com/image.jpg"
+                  />
+                </div>
+              </div>
+
+              <div class="field">
+                <label class="label">Date</label>
+                <div class="control">
+                  <input class="input" type="text" :value="dayjs().format('YYYY-MM-DD')" readonly />
+                </div>
+              </div>
+            </section>
+            <footer class="modal-card-foot">
+              <button
+                class="button is-primary"
+                @click="createPost"
+                :class="{ 'is-loading': isSubmitting }"
+                :disabled="isSubmitting"
+              >
+                Create Post
+              </button>
+              <button class="button" @click="toggleModal" :disabled="isSubmitting">Cancel</button>
+            </footer>
+          </div>
         </div>
       </div>
     </section>
@@ -211,5 +439,15 @@ dayjs.extend(relativeTime)
 .comment-time {
   font-size: 0.7rem !important;
   margin-bottom: 0 !important;
+}
+
+/* Modal styling */
+.modal-card {
+  width: 80%;
+  max-width: 800px;
+}
+
+.select select option {
+  color: #363636;
 }
 </style>
