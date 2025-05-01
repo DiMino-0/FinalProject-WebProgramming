@@ -359,7 +359,7 @@ dayjs.extend(relativeTime)
                   <td>{{ friendship.id }}</td>
                   <td>{{ getUsernameById(friendship.user_initiated_id) }}</td>
                   <td>{{ getUsernameById(friendship.user_accepted_id) }}</td>
-                  <td>{{ dayjs(friendship.created_on).fromNow() }}</td>
+                  <td>{{ dayjs(friendship.created_at).fromNow() }}</td>
                   <td>
                     <div class="buttons are-small">
                       <button class="button is-danger is-outlined">
