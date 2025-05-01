@@ -4,6 +4,7 @@ const express = require("express");
 const usersController = require("./controllers/users");
 const postsController = require("./controllers/posts");
 const friendsController = require("./controllers/friends");
+const commentsController = require("./controllers/comments");
 
 const PORT = process.env.PORT ?? 8000;
 
@@ -30,6 +31,7 @@ app
   .use("/api/v1/users", usersController)
   .use("/api/v1/posts", postsController)
   .use("/api/v1/friends", friendsController)
+  .use("/api/v1/comments", commentsController)
   .use("/", express.static("dist"));
 
 //error handling middleware

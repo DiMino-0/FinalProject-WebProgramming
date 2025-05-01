@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import { ref, watchEffect } from 'vue'
-import { isLoggedIn, refSession } from '@/models/session'
+import { isLoggedIn, refSession, apiCustomMethod } from '@/models/session'
 import { getAll as getAllFriends, type Friend } from '@/models/friend'
 import { type User } from '@/models/users'
+import { getAllByUserId, type Post } from '@/models/post'
+import type { Comment } from '@/models/comment'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 
@@ -12,8 +14,20 @@ dayjs.extend(relativeTime)
 const session = refSession()
 const friendships = ref<Friend[]>([])
 const isLoading = ref(false)
-
 const myFriends = ref<User[]>([])
+
+// Track which friend's posts are being viewed
+const viewingPostsOfFriendId = ref<number | null>(null)
+const friendPosts = ref<Post[]>([])
+const loadingPosts = ref(false)
+
+// New comment form data
+const newCommentText = ref<string>('')
+const submittingComment = ref(false)
+const commentingOnPostId = ref<number | null>(null)
+
+// Add a ref to store comments for each post
+const postComments = ref<{ [postId: number]: Comment[] }>({})
 
 // Function to find friendship date for a specific friend
 const getFriendshipDate = (friendId: string | number): string => {
@@ -84,6 +98,109 @@ watchEffect(() => {
     myFriends.value = []
   }
 })
+
+// Function to view a friend's posts
+const viewFriendPosts = (friendId: number) => {
+  if (viewingPostsOfFriendId.value === friendId) {
+    // Toggle off if already viewing this friend's posts
+    viewingPostsOfFriendId.value = null
+    friendPosts.value = []
+    postComments.value = {}
+    return
+  }
+
+  loadingPosts.value = true
+  viewingPostsOfFriendId.value = friendId
+
+  getAllByUserId(friendId)
+    .then((response) => {
+      friendPosts.value = response.items
+
+      // After loading posts, fetch comments for each post
+      if (response.items.length > 0) {
+        // Create a map to store comments by post ID
+        const commentMap: { [postId: number]: Comment[] } = {}
+
+        // Initialize all posts with empty comments array
+        response.items.forEach((post) => {
+          commentMap[post.id] = []
+        })
+
+        // Fetch all comments
+        import('@/models/comment').then(({ getAllComments }) => {
+          getAllComments()
+            .then((commentsResponse) => {
+              // Filter and organize comments by post ID
+              commentsResponse.items.forEach((comment) => {
+                if (response.items.some((post) => post.id === comment.post_id)) {
+                  if (!commentMap[comment.post_id]) {
+                    commentMap[comment.post_id] = []
+                  }
+                  commentMap[comment.post_id].push(comment)
+                }
+              })
+
+              postComments.value = commentMap
+            })
+            .catch((error) => {
+              console.error('Error loading comments:', error)
+            })
+        })
+      }
+    })
+    .catch((error) => {
+      console.error('Error loading friend posts:', error)
+    })
+    .finally(() => {
+      loadingPosts.value = false
+    })
+}
+
+// Function to get user info for a comment
+const getCommentUser = (userId: number) => {
+  return (
+    myFriends.value.find((friend) => friend.id === userId) ||
+    (session.value.user?.id === userId ? session.value.user : null)
+  )
+}
+
+// Toggle comment form for a specific post
+const toggleCommentForm = (postId: number | null) => {
+  commentingOnPostId.value = postId
+  newCommentText.value = ''
+}
+
+// Submit a new comment - update to refresh comments after submission
+const submitComment = (postId: number) => {
+  if (!newCommentText.value.trim() || !session.value.user?.id) return
+
+  submittingComment.value = true
+
+  const commentData = {
+    comment_message: newCommentText.value,
+    user_id: session.value.user.id,
+    post_id: postId,
+  }
+
+  apiCustomMethod('comments', 'POST', commentData)
+    .then((response) => {
+      // Clear the form
+      newCommentText.value = ''
+      commentingOnPostId.value = null
+
+      // Add the new comment to our local comments list
+      if (!postComments.value[postId]) {
+        postComments.value[postId] = []
+      }
+      postComments.value[postId].push(response as Comment)
+    })
+    .catch((error) => {
+      console.error('Error adding comment:', error)
+    })
+    .finally(() => {
+      submittingComment.value = false
+    })
+}
 </script>
 
 <template>
@@ -151,10 +268,137 @@ watchEffect(() => {
                     </p>
                   </div>
                   <div class="buttons">
-                    <button class="button is-small is-light">
+                    <button class="button is-small is-light" @click="viewFriendPosts(friend.id)">
                       <span class="icon"><i class="fas fa-eye"></i></span>
-                      <span>View Posts</span>
+                      <span>{{
+                        viewingPostsOfFriendId === friend.id ? 'Hide Posts' : 'View Posts'
+                      }}</span>
                     </button>
+                  </div>
+                </div>
+
+                <!-- Friend Posts Section -->
+                <div v-if="viewingPostsOfFriendId === friend.id" class="friend-posts">
+                  <div v-if="loadingPosts" class="has-text-centered p-3">
+                    <span class="icon">
+                      <i class="fas fa-spinner fa-pulse"></i>
+                    </span>
+                    <span>Loading posts...</span>
+                  </div>
+
+                  <div v-else-if="friendPosts.length === 0" class="no-posts p-3">
+                    <p class="has-text-white">This friend hasn't posted anything yet.</p>
+                  </div>
+
+                  <div v-else class="posts-container">
+                    <div v-for="post in friendPosts" :key="post.id" class="post-item p-3">
+                      <div class="post-header">
+                        <h4 class="is-size-5 has-text-white">{{ post.title }}</h4>
+                        <span class="tag is-info">{{ post.type_of_activity }}</span>
+                      </div>
+                      <p class="has-text-white">{{ post.post_message }}</p>
+                      <p class="has-text-white is-size-7">
+                        <strong>{{ post.duration }}</strong> at
+                        <strong>{{ post.location || 'Unknown location' }}</strong>
+                      </p>
+                      <p class="has-text-white is-size-7">
+                        Posted: {{ dayjs(post.created_on).fromNow() }}
+                      </p>
+
+                      <!-- Display Comments Section -->
+                      <div class="comments-section mt-3">
+                        <h5 class="is-size-6 has-text-white mb-2">
+                          <span class="icon"><i class="fas fa-comments"></i></span>
+                          <span>Comments ({{ postComments[post.id]?.length || 0 }})</span>
+                        </h5>
+
+                        <div v-if="postComments[post.id]?.length > 0" class="comments-list">
+                          <div
+                            v-for="comment in postComments[post.id]"
+                            :key="comment.id"
+                            class="comment-box"
+                          >
+                            <div class="comment-header">
+                              <div class="comment-user">
+                                <figure class="image is-24x24 mr-2">
+                                  <img
+                                    :src="
+                                      getCommentUser(comment.user_id)?.pfp_image_url ||
+                                      'https://bulma.io/images/placeholders/24x24.png'
+                                    "
+                                    class="is-rounded"
+                                    alt="User avatar"
+                                  />
+                                </figure>
+                                <span class="has-text-white">
+                                  {{
+                                    getCommentUser(comment.user_id)?.username ||
+                                    `User #${comment.user_id}`
+                                  }}
+                                </span>
+                              </div>
+                              <span class="has-text-white is-size-7">
+                                {{ dayjs(comment.created_on).fromNow() }}
+                              </span>
+                            </div>
+                            <p class="comment-content has-text-white">
+                              {{ comment.comment_message }}
+                            </p>
+                          </div>
+                        </div>
+
+                        <div v-else class="has-text-white-ter is-size-7 no-comments">
+                          No comments yet.
+                        </div>
+                      </div>
+
+                      <!-- Comment button -->
+                      <div class="mt-2">
+                        <button
+                          class="button is-small is-info is-light"
+                          @click="toggleCommentForm(post.id)"
+                        >
+                          <span class="icon">
+                            <i class="fas fa-comment"></i>
+                          </span>
+                          <span>Add Comment</span>
+                        </button>
+                      </div>
+
+                      <!-- Comment form -->
+                      <div v-if="commentingOnPostId === post.id" class="comment-form mt-2">
+                        <div class="field">
+                          <div class="control">
+                            <textarea
+                              class="textarea is-small"
+                              v-model="newCommentText"
+                              placeholder="Write your comment..."
+                            ></textarea>
+                          </div>
+                        </div>
+                        <div class="field is-grouped">
+                          <div class="control">
+                            <button
+                              class="button is-small is-primary"
+                              @click="submitComment(post.id)"
+                              :class="{ 'is-loading': submittingComment }"
+                              :disabled="!newCommentText.trim() || submittingComment"
+                            >
+                              Submit
+                            </button>
+                          </div>
+                          <div class="control">
+                            <button
+                              class="button is-small is-light"
+                              @click="toggleCommentForm(null)"
+                              :disabled="submittingComment"
+                            >
+                              Cancel
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -224,5 +468,93 @@ watchEffect(() => {
 
 .buttons {
   margin-top: 1rem;
+}
+
+.friend-posts {
+  background-color: rgba(0, 0, 0, 0.1);
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.post-item {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 0.75rem;
+}
+
+.post-item:last-child {
+  border-bottom: none;
+}
+
+.post-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.comment-form {
+  background-color: rgba(255, 255, 255, 0.1);
+  padding: 0.75rem;
+  border-radius: 4px;
+}
+
+.textarea {
+  background-color: white;
+}
+
+.mt-2 {
+  margin-top: 0.5rem;
+}
+
+/* Comment styling */
+.comments-section {
+  margin-top: 1rem;
+  border-top: 1px dashed rgba(255, 255, 255, 0.2);
+  padding-top: 0.5rem;
+}
+
+.comments-list {
+  margin-bottom: 1rem;
+}
+
+.comment-box {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  padding: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.comment-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.25rem;
+}
+
+.comment-user {
+  display: flex;
+  align-items: center;
+}
+
+.comment-content {
+  padding-left: 2rem;
+  word-break: break-word;
+}
+
+.no-comments {
+  font-style: italic;
+  opacity: 0.7;
+  padding: 0.5rem;
+}
+
+.mt-3 {
+  margin-top: 0.75rem;
+}
+
+.mb-2 {
+  margin-bottom: 0.5rem;
+}
+
+.mr-2 {
+  margin-right: 0.5rem;
 }
 </style>
