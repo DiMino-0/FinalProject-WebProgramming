@@ -370,7 +370,7 @@ const submitComment = (postId: number) => {
                         <div class="field">
                           <div class="control">
                             <textarea
-                              class="textarea is-small"
+                              class="textarea is-small has-text-black"
                               v-model="newCommentText"
                               placeholder="Write your comment..."
                             ></textarea>
@@ -556,5 +556,11 @@ const submitComment = (postId: number) => {
 
 .mr-2 {
   margin-right: 0.5rem;
+}
+
+/* Placeholder text color for the comment textarea */
+.comment-form .textarea::placeholder {
+  color: black;
+  opacity: 0.7;
 }
 </style>

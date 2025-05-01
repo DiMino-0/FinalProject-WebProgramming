@@ -122,6 +122,15 @@ function formatDuration(minutes: number): string {
   return `${remainingMinutes}m`
 }
 
+// Computed properties for active activity types
+const todayActiveTypes = computed(() => {
+  return activityTypes.filter((type) => stats.value.today.types[type.id] > 0)
+})
+
+const thisWeekActiveTypes = computed(() => {
+  return activityTypes.filter((type) => stats.value.thisWeek.types[type.id] > 0)
+})
+
 // Helper to get color class for activity type
 function getColorForActivityType(type: string): string {
   const activityType = activityTypes.find((t) => t.id.toLowerCase() === type.toLowerCase())
@@ -158,13 +167,12 @@ function getColorForActivityType(type: string): string {
                     <p><strong>Activity Types:</strong></p>
                     <div class="activity-types-container">
                       <div
-                        v-for="type in activityTypes"
+                        v-for="type in todayActiveTypes"
                         :key="type.id"
-                        class="activity-type"
-                        :class="{ 'has-activity': stats.today.types[type.id] > 0 }"
+                        class="activity-type has-activity"
                       >
                         <span class="tag" :class="type.color">{{ type.label }}</span>
-                        {{ stats.today.types[type.id] || 0 }}
+                        {{ stats.today.types[type.id] }}
                       </div>
                     </div>
                   </div>
@@ -187,13 +195,12 @@ function getColorForActivityType(type: string): string {
                     <p><strong>Activity Types:</strong></p>
                     <div class="activity-types-container">
                       <div
-                        v-for="type in activityTypes"
+                        v-for="type in thisWeekActiveTypes"
                         :key="type.id"
-                        class="activity-type"
-                        :class="{ 'has-activity': stats.thisWeek.types[type.id] > 0 }"
+                        class="activity-type has-activity"
                       >
                         <span class="tag" :class="type.color">{{ type.label }}</span>
-                        {{ stats.thisWeek.types[type.id] || 0 }}
+                        {{ stats.thisWeek.types[type.id] }}
                       </div>
                     </div>
                   </div>
