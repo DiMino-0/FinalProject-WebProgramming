@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import LoginButton from './LoginButton.vue'
-import RegisterPopup from './RegisterButton.vue'
+import RegisterButton from './RegisterButton.vue'
 
 const showBurger = ref(false)
 </script>
@@ -47,7 +47,7 @@ const showBurger = ref(false)
 
         <div class="navbar-end">
           <LoginButton class="navbar-item" />
-          <RegisterPopup class="navbar-item" />
+          <RegisterButton class="navbar-item" />
         </div>
       </div>
     </div>

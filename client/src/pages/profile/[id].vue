@@ -296,6 +296,8 @@ watchEffect(() => {
 .post-card {
   transition: transform 0.2s;
   border-left: 4px solid #3273dc;
+  background-color: rgb(233, 75, 75);
+  color: white;
 }
 
 .post-card:hover {
@@ -306,6 +308,7 @@ watchEffect(() => {
   margin-top: 1rem;
   padding-top: 0.5rem;
   border-top: 1px solid #f0f0f0;
+  color: white;
 }
 
 .mb-4 {

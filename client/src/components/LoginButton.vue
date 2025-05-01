@@ -2,6 +2,7 @@
 import { refSession, login, logout, isLoggedIn } from '../models/session'
 import { ref } from 'vue'
 import { getAll, type User } from '../models/users'
+import { useRouter } from 'vue-router'
 
 // Add defineOptions to set inheritAttrs to false
 defineOptions({
@@ -14,8 +15,15 @@ const session = refSession()
 getAll().then((response) => {
   users.value = response.items
 })
+
+// Add a router instance
+const router = useRouter()
+
+// Function to navigate to profile page
+function navigateToProfile() {
+  router.push(`/profile/${session.value?.user?.id}`)
+}
 </script>
-<!-- TODO: Show fields to login checking db for the user, NEED AUTH -->
 
 <template>
   <div class="buttons" v-if="!isLoggedIn()" v-bind="$attrs">
@@ -47,6 +55,7 @@ getAll().then((response) => {
       {{ session.user?.username }} {{ session.user?.email }} (<a @click="logout()">Log out</a>)
       <br />
     </div>
+    <button class="button is-small is-info mt-1" @click="navigateToProfile">Profile</button>
   </div>
 </template>
 

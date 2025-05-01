@@ -136,7 +136,7 @@ const viewUserProfile = (userId: number) => {
                       </button>
 
                       <!-- Only show add friend button for users who aren't current user -->
-                      <button
+                      <!-- <button
                         v-if="session.user && user.id !== session.user.id"
                         class="button is-success is-small"
                       >
@@ -144,7 +144,7 @@ const viewUserProfile = (userId: number) => {
                           <i class="fas fa-user-plus"></i>
                         </span>
                         <span>Add Friend</span>
-                      </button>
+                      </button> -->
                     </div>
                   </div>
                 </div>
