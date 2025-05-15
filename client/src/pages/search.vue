@@ -44,7 +44,7 @@ async function getAsyncData(value: string) {
               :debounce="500"
               @input="getAsyncData"
               expanded
-              placeholder="Select a product"
+              placeholder="Search for users..."
               icon="search"
               clearable
               open-on-focus
