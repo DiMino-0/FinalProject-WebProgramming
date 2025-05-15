@@ -3,6 +3,16 @@ const express = require("express");
 const router = express.Router();
 
 router
+  .get("/search/:query", (req, res, next) => {
+    const { query } = req.params;
+    const { limit, offset, sort, order } = req.query;
+    model
+      .search(query, num(limit), num(offset), sort, order)
+      .then((data) => {
+        res.send(data);
+      })
+      .catch(next);
+  })
   .get("/", (req, res, next) => {
     const { limit, offset, sort, order } = req.query;
 
@@ -58,16 +68,6 @@ router
       .then(() => {
         // Return the previously fetched user data
         res.send(deletedUser);
-      })
-      .catch(next);
-  })
-  .get("/search/:query", (req, res, next) => {
-    const { query } = req.params;
-    const { limit, offset, sort, order } = req.query;
-    model
-      .search(query, num(limit), num(offset), sort, order)
-      .then((data) => {
-        res.send(data);
       })
       .catch(next);
   });

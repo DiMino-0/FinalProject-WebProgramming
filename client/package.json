@@ -15,6 +15,7 @@
   "dependencies": {
     "@fortawesome/fontawesome-free": "^5.15.4",
     "@oruga-ui/oruga-next": "^0.10.5",
+    "@oruga-ui/theme-oruga": "^0.6.0",
     "bulma": "^1.0.3",
     "final-project": "file:..",
     "vue": "^3.5.13",

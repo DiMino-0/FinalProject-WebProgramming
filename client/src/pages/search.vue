@@ -1,68 +1,33 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { type User } from '@/models/users'
-import { api } from '@/models/session'
+import { search, type User } from '@/models/users'
+import { OField, OAutocomplete } from '@oruga-ui/oruga-next'
 
 const router = useRouter()
 
-const searchTerm = ref('')
-const searchResults = ref<User[]>([])
+const newItemId = ref('')
 const isLoading = ref(false)
-const hasSearched = ref(false)
-const searchTimeout = ref<number | null>(null)
-// Function to search users
-const searchUsers = async () => {
-  if (!searchTerm.value.trim()) {
-    searchResults.value = []
-    hasSearched.value = false
-    return
-  }
 
-  isLoading.value = true
-  hasSearched.value = true
-
-  try {
-    // Call the search API endpoint
-    const response = await api<{ items: User[]; total: number }>(`users/search/${searchTerm.value}`)
-    searchResults.value = response.items
-  } catch (error) {
-    console.error('Error searching users:', error)
-    searchResults.value = []
-  } finally {
-    isLoading.value = false
-  }
-}
-
-// Debounce search input to avoid excessive API calls
-watch(searchTerm, () => {
-  if (searchTimeout.value) {
-    clearTimeout(searchTimeout.value)
-  }
-
-  searchTimeout.value = setTimeout(() => {
-    searchUsers()
-  }, 300) as unknown as number
-})
-
-// Load all users initially when no search is performed
-// const loadAllUsers = async () => {
-//   isLoading.value = true
-//   try {
-//     const response = await getAll()
-//     searchResults.value = response.items
-//   } catch (error) {
-//     console.error('Error loading users:', error)
-//   } finally {
-//     isLoading.value = false
-//   }
-// }
-
+// Handle navigation to user profile
 const viewUserProfile = (userId: number) => {
   router.push(`/profile/${userId}`)
 }
 
-// loadAllUsers()
+const options = ref<
+  {
+    value: User
+    label: string
+  }[]
+>([])
+
+async function getAsyncData(value: string) {
+  const response = await search(value)
+  options.value = response.items.map((item) => ({
+    value: item,
+    label: item.username,
+  }))
+}
 </script>
 
 <template>
@@ -71,41 +36,24 @@ const viewUserProfile = (userId: number) => {
       <div class="container block">
         <h1 class="title is-1 has-text-black">Search Users</h1>
         <div class="search-container">
-          <!-- <div class="field">
-            <div class="control has-icons-left">
-              <input
-                class="input is-medium"
-                type="text"
-                placeholder="Search by username or email"
-                v-model="searchTerm"
-              />
-              <span class="icon is-left">
-                <i class="fas fa-search"></i>
-              </span>
-            </div>
-          </div> -->
-
-          <o-field label="Search by username or email">
+          <o-field>
             <o-autocomplete
-              :items="searchResults"
-              :item-value="(item: User) => item.username"
-              :item-label="(item: User) => item.email"
-              :loading="isLoading"
-              :loading-icon="{
-                icon: 'fas fa-spinner fa-pulse',
-                size: 'is-small',
-              }"
-              @select="(item: User) => viewUserProfile(item.id)"
-              @input="(value: string) => (searchTerm = value)"
-              :placeholder="'Search by username or email'"
-              :no-results-text="'No results found'"
-              :no-results-icon="{
-                icon: 'fas fa-search',
-                size: 'is-small',
-              }"
-              rounded
+              v-model="newItemId"
+              :options="options"
+              backend-filtering
+              :debounce="500"
+              @input="getAsyncData"
+              expanded
+              placeholder="Select a product"
+              icon="search"
               clearable
+              open-on-focus
             >
+              <template #empty>
+                <div class="has-text-centered p-2">
+                  <span>No results found</span>
+                </div>
+              </template>
             </o-autocomplete>
           </o-field>
         </div>
@@ -121,8 +69,8 @@ const viewUserProfile = (userId: number) => {
         <!-- Search results -->
         <div v-else-if="1 == 1" class="search-results mt-4">
           <h2 class="title is-4 has-text-black">Users:</h2>
-          <div class="columns is-multiline">
-            <div v-for="user in searchResults" :key="user.id" class="column is-one-third">
+          <!-- <div class="columns is-multiline">
+            <div v-for="user in users" :key="user.id" class="column is-one-third">
               <div class="card user-card">
                 <div class="card-content">
                   <div class="media">
@@ -148,16 +96,16 @@ const viewUserProfile = (userId: number) => {
                     <p class="has-text-white is-size-7">User ID: {{ user.id }}</p>
 
                     <!-- Add profile button -->
-                    <div class="buttons mt-3">
+          <!-- <div class="buttons mt-3">
                       <button class="button is-link is-small" @click="viewUserProfile(user.id)">
                         <span class="icon is-small">
                           <i class="fas fa-user"></i>
                         </span>
                         <span>View Profile</span>
-                      </button>
+                      </button> -->
 
-                      <!-- Only show add friend button for users who aren't current user -->
-                      <!-- <button
+          <!-- Only show add friend button for users who aren't current user -->
+          <!-- <button
                         v-if="session.user && user.id !== session.user.id"
                         class="button is-success is-small"
                       >
@@ -166,22 +114,14 @@ const viewUserProfile = (userId: number) => {
                         </span>
                         <span>Add Friend</span>
                       </button> -->
-                    </div>
-                  </div>
-                </div>
+        </div>
+      </div>
+      <!-- </div>
               </div>
             </div>
           </div>
         </div>
-
-        <!-- No results message -->
-        <div v-else-if="hasSearched" class="has-text-centered mt-6">
-          <span class="icon is-large">
-            <i class="fas fa-search fa-2x"></i>
-          </span>
-          <p class="is-size-5 mt-2">No users found matching "{{ searchTerm }}"</p>
-        </div>
-      </div>
+      </div> -->
     </section>
   </main>
 </template>

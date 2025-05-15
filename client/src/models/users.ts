@@ -33,3 +33,11 @@ export function createUser(user: User): Promise<User> {
     body: JSON.stringify(user),
   })
 }
+
+export function search(query: string): Promise<DataListEnvelope<User>> {
+  return api(`users/search/${query}`)
+}
+
+export function updateUser(id: number, userData: Partial<User>): Promise<User> {
+  return apiCustomMethod(`users/${id}`, 'PATCH', userData)
+}
