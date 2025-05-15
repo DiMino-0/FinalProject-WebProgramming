@@ -1,16 +1,16 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
-import { getAll, type User } from '@/models/users'
-import { api } from '@/models/session'
 import { useRouter } from 'vue-router'
+import { type User } from '@/models/users'
+import { api } from '@/models/session'
+
+const router = useRouter()
 
 const searchTerm = ref('')
 const searchResults = ref<User[]>([])
 const isLoading = ref(false)
 const hasSearched = ref(false)
 const searchTimeout = ref<number | null>(null)
-const router = useRouter()
-
 // Function to search users
 const searchUsers = async () => {
   if (!searchTerm.value.trim()) {
@@ -46,23 +46,23 @@ watch(searchTerm, () => {
 })
 
 // Load all users initially when no search is performed
-const loadAllUsers = async () => {
-  isLoading.value = true
-  try {
-    const response = await getAll()
-    searchResults.value = response.items
-  } catch (error) {
-    console.error('Error loading users:', error)
-  } finally {
-    isLoading.value = false
-  }
-}
+// const loadAllUsers = async () => {
+//   isLoading.value = true
+//   try {
+//     const response = await getAll()
+//     searchResults.value = response.items
+//   } catch (error) {
+//     console.error('Error loading users:', error)
+//   } finally {
+//     isLoading.value = false
+//   }
+// }
 
 const viewUserProfile = (userId: number) => {
   router.push(`/profile/${userId}`)
 }
 
-loadAllUsers()
+// loadAllUsers()
 </script>
 
 <template>
@@ -71,7 +71,7 @@ loadAllUsers()
       <div class="container block">
         <h1 class="title is-1 has-text-black">Search Users</h1>
         <div class="search-container">
-          <div class="field">
+          <!-- <div class="field">
             <div class="control has-icons-left">
               <input
                 class="input is-medium"
@@ -83,7 +83,31 @@ loadAllUsers()
                 <i class="fas fa-search"></i>
               </span>
             </div>
-          </div>
+          </div> -->
+
+          <o-field label="Search by username or email">
+            <o-autocomplete
+              :items="searchResults"
+              :item-value="(item: User) => item.username"
+              :item-label="(item: User) => item.email"
+              :loading="isLoading"
+              :loading-icon="{
+                icon: 'fas fa-spinner fa-pulse',
+                size: 'is-small',
+              }"
+              @select="(item: User) => viewUserProfile(item.id)"
+              @input="(value: string) => (searchTerm = value)"
+              :placeholder="'Search by username or email'"
+              :no-results-text="'No results found'"
+              :no-results-icon="{
+                icon: 'fas fa-search',
+                size: 'is-small',
+              }"
+              rounded
+              clearable
+            >
+            </o-autocomplete>
+          </o-field>
         </div>
 
         <!-- Loading indicator -->
@@ -95,8 +119,8 @@ loadAllUsers()
         </div>
 
         <!-- Search results -->
-        <div v-else-if="searchResults.length > 0" class="search-results mt-4">
-          <h2 class="title is-4 has-text-black">Results ({{ searchResults.length }})</h2>
+        <div v-else-if="1 == 1" class="search-results mt-4">
+          <h2 class="title is-4 has-text-black">Users:</h2>
           <div class="columns is-multiline">
             <div v-for="user in searchResults" :key="user.id" class="column is-one-third">
               <div class="card user-card">

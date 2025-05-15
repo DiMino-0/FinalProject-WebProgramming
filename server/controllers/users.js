@@ -49,12 +49,10 @@ router
 
     let deletedUser;
 
-    // First get the user data
     model
       .get(id)
       .then((user) => {
-        deletedUser = user; // Store the user data
-        // Then delete the user
+        deletedUser = user;
         return model.remove(id);
       })
       .then(() => {
