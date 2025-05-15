@@ -6,7 +6,7 @@ import { OField, OAutocomplete } from '@oruga-ui/oruga-next'
 
 const router = useRouter()
 
-const newItemId = ref('')
+const selectedUser = ref<User | null>(null)
 const isLoading = ref(false)
 
 // Handle navigation to user profile
@@ -38,7 +38,7 @@ async function getAsyncData(value: string) {
         <div class="search-container">
           <o-field>
             <o-autocomplete
-              v-model="newItemId"
+              v-model="selectedUser"
               :options="options"
               backend-filtering
               :debounce="500"
